@@ -46,6 +46,13 @@ h1{
 #sudoku-game input:nth-child(n+46):nth-child(-n+54) { 
     border-bottom: 3px solid black; 
 }
+.controls {
+   display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+}
 
 .number-btn {
     margin:5px;
@@ -97,12 +104,21 @@ h1{
     background-color: #ffcccc !important; 
     color: #d8000c !important;         
     border: 2px solid #ff3333 !important; 
-    transition: all 0.1s ease;            
+    animation: shake 0.2s ease-in-out 0s 2; /* Add a shaking animation for visual feedback */
 }
-@keyframes shake {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(-4px); }
-    50% { transform: translateX(4px); }
-    75% { transform: translateX(-4px); }
-    100% { transform: translateX(0); }
+#status{
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    font-weight: bold;
+    transition: color 0.3s ease;
 }
+.last-life {
+    color: red;
+     animation: pulse 1s infinite; /* Add a pulsing animation to indicate danger */
+}
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+   
