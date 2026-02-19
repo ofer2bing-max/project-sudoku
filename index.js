@@ -49,6 +49,9 @@ document.addEventListener("DOMContentLoaded", () => {   // Wait for the DOM to l
                     this.classList.add("error"); // Add an error class to indicate invalid placement
                     setTimeout(() => this.classList.remove("error"), 500); // Remove the error class after a short delay to give visual feedback
 
+                    if(lives<=0){
+                        GameOverScreen();
+                    }
                 }
             }
         });
@@ -157,4 +160,12 @@ function solveSudoku(board) {
         }
     }
     return true; // If the entire board is filled without conflicts, return true (solved)
+}
+
+function GameOverScreen(){
+    const screen = document.getElementById("Game-over-screen");
+    if(screen){
+        screen.classList.remove("hidden");
+    }
+
 }
