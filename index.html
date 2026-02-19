@@ -9,8 +9,9 @@
 <body>
 
     <h1>Sudoku Game</h1>
+    <div id="status">lives: <span id="lives-count">3</span></div>
     <div id="sudoku-game"></div>
-
+    <div class="controls">
     <div class="number-buttons">
         <button class="number-btn" data-number="1">1</button>
         <button class="number-btn" data-number="2">2</button>
@@ -22,12 +23,13 @@
         <button class="number-btn" data-number="8">8</button>
         <button class="number-btn" data-number="9">9</button>
     </div>
+    
     <div class="button-actions">
         <button id="restart">Restart</button>
         <button id="mark-small">Mark Small</button>
         <button id="clear">Eraser</button>
     </div>
-    
+    </div>
 
 
    <script src="index.js"></script> 
