@@ -8,36 +8,43 @@
 </head>
 <body>
 
-    <h1>Sudoku Game</h1>
-    <div id="status">lives: <span id="lives-count">3</span></div>
-    <div id="sudoku-game"></div>
-    <div class="controls">
-    <div class="number-buttons">
-        <button class="number-btn" data-number="1">1</button>
-        <button class="number-btn" data-number="2">2</button>
-        <button class="number-btn" data-number="3">3</button>
-        <button class="number-btn" data-number="4">4</button>
-        <button class="number-btn" data-number="5">5</button>
-        <button class="number-btn" data-number="6">6</button>
-        <button class="number-btn" data-number="7">7</button>
-        <button class="number-btn" data-number="8">8</button>
-        <button class="number-btn" data-number="9">9</button>
-    </div>
+    <h1>Sudoku game</h1>
     
-    <div class="button-actions">
-        <button id="restart">Restart</button>
-        <button id="mark-small">Mark Small</button>
-        <button id="clear">Eraser</button>
-    </div>
-    </div>
-    <div id="Game-over-screen" class="hidden">
-        <div id="content-modal"></div>
-        <h2 id="end-message">Game over</h2>
-        <div class="menu-options">
-            <button class="play-again" onclick="Location.reload()">Play again</button>
+    <div id="status">lives: <span id="lives-count">3</span>/3</div>
+
+    <div id="sudoku-game"></div>
+
+    <div class="controls">
+        <div class="number-buttons">
+            <button class="number-btn" data-number="1">1</button>
+            <button class="number-btn" data-number="2">2</button>
+            <button class="number-btn" data-number="3">3</button>
+            <button class="number-btn" data-number="4">4</button>
+            <button class="number-btn" data-number="5">5</button>
+            <button class="number-btn" data-number="6">6</button>
+            <button class="number-btn" data-number="7">7</button>
+            <button class="number-btn" data-number="8">8</button>
+            <button class="number-btn" data-number="9">9</button>
+        </div>
+        
+        <div class="button-actions">
+            <button id="restart">restart</button>
+            <button id="mark-small">mark small</button>
+            <button id="clear">clear</button>
         </div>
     </div>
 
+    <div id="Game-over-screen" class="hidden">
+        <div id="content-modal">
+            <h2 id="end-message">Game Over</h2>
+            <p class="sub-message">You lost the game because you made 3 mistakes.</p>
+            
+            <div class="menu-options">
+                <button class="play-again" onclick="location.reload()">Play Again</button>
+                <button class="new-game" onclick="location.reload()">New Game</button>
+            </div>
+        </div>
+    </div>
 
    <script src="index.js"></script> 
 </body>

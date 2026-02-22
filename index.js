@@ -1,6 +1,6 @@
 let selectedNumber = null;  // This will hold the currently selected number (1-9) or "" for eraser
 let isMarkSmallMode = false;    // This will track if we're in "Mark Small" mode or not
-let lives=3;   // Number of lives the player has (for error tracking)
+let lives = 3;   // Number of lives the player has (for error tracking)
 
 document.addEventListener("DOMContentLoaded", () => {   // Wait for the DOM to load before running the script
     const board = document.getElementById("sudoku-game");   // The container for the Sudoku grid
@@ -14,10 +14,10 @@ document.addEventListener("DOMContentLoaded", () => {   // Wait for the DOM to l
         input.readOnly = true;   // User must use your buttons
 
         input.addEventListener("click", function() { // When an input box is clicked
-            if (selectedNumber===null) return;
-            if(selectedNumber===""){    // If eraser is selected, clear the cell
-                this.value="";     // Clear the value of the cell
-                this.classList.remove("small-text","error")  // Remove any classes that might be there 
+            if (selectedNumber === null) return;
+            if (selectedNumber === "") {    // If eraser is selected, clear the cell
+                this.value = "";     // Clear the value of the cell
+                this.classList.remove("small-text", "error")  // Remove any classes that might be there 
                 return;
             }
             // Calculate the row and column based on the index of the input
@@ -36,21 +36,26 @@ document.addEventListener("DOMContentLoaded", () => {   // Wait for the DOM to l
                 }
             } else {
                 // NORMAL PLACEMENT LOGIC
-                const currentGrid =getBoardArray();    // Get the current state of the board as a 2D array for validation
-                const numToPlace=parseInt(selectedNumber);   // Convert the selected number to an integer for validation
-                if(isValid(currentGrid, row,col, numToPlace)){    // If the placement is valid according to Sudoku rules
-                    this.classList.remove("small-text","error"); // Remove any classes that might be there
-                    this.value=selectedNumber; // Place the selected number in the cell
+                const currentGrid = getBoardArray();    // Get the current state of the board as a 2D array for validation
+                const numToPlace = parseInt(selectedNumber);   // Convert the selected number to an integer for validation
+                if (isValid(currentGrid, row, col, numToPlace)) {    // If the placement is valid according to Sudoku rules
+                    this.classList.remove("small-text", "error"); // Remove any classes that might be there
+                    this.value = selectedNumber; // Place the selected number in the cell
                 }
-                else{
+                else {
                     lives--;
                     updateLivesDisplay();
 
+                    this.value = selectedNumber; // Temporarily show the incorrect number to give feedback to the player
                     this.classList.add("error"); // Add an error class to indicate invalid placement
-                    setTimeout(() => this.classList.remove("error"), 500); // Remove the error class after a short delay to give visual feedback
 
-                    if(lives<=0){
-                        GameOverScreen();
+                    if (lives <= 0) {
+                        setTimeout(() => { GameOverScreen(); }, 500); // Show the game over screen after a short delay to allow the player to see the last mistake
+                    } else {
+                        setTimeout(() => { 
+                            this.value = ""; // Clear the incorrect number after a short delay to give visual feedback
+                            this.classList.remove("error"); 
+                        }, 1000); // Remove the error class after a short delay to give visual feedback
                     }
                 }
             }
@@ -77,8 +82,8 @@ document.addEventListener("DOMContentLoaded", () => {   // Wait for the DOM to l
 
     // 4. Eraser Board
     document.getElementById("clear").addEventListener("click", () => {
-        numButtons.forEach(b=>b.classList.remove("selected-number"));
-        selectedNumber=""; // Set selectedNumber to an empty string to indicate that the eraser is selected
+        numButtons.forEach(b => b.classList.remove("selected-number"));
+        selectedNumber = ""; // Set selectedNumber to an empty string to indicate that the eraser is selected
         document.getElementById("clear").classList.add("selected-number")
     }); 
 
@@ -87,9 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {   // Wait for the DOM to l
         location.reload(); // Reload the page to reset the game
     });
 });
-// --- HELPER FUNCTION TO GET THE BOARD STATE AS A 2D ARRAY ---
-// This function reads the current values from the input boxes and constructs a 2D array representing the Sudoku board. 
-// It only considers "real" numbers (length 1 and not marked as small text) for validation purposes, treating empty cells and pencil marks as 0.
+
 function getBoardArray() {
     const boardDiv = document.getElementById("sudoku-game");
     const inputs = boardDiv.querySelectorAll("input");
@@ -100,8 +103,6 @@ function getBoardArray() {
         for (let c = 0; c < 9; c++) {
             let index = r * 9 + c;
             let val = inputs[index].value;
-            
-            // Only count "Real" numbers (length 1 and NOT small-text)
             if (val.length === 1 && !inputs[index].classList.contains("small-text")) {
                 rowData.push(parseInt(val));
             } else {
@@ -113,18 +114,13 @@ function getBoardArray() {
     return grid;
 }
 
-// --- THE LOGIC (Checks Sudoku rules) ---
 function isValid(board, row, col, num) {
     for (let i = 0; i < 9; i++) {
-        // 1. Check Row and columns
         if (board[row][i] === num || board[i][col] === num) return false;
-        
-        // 3. Check 3x3 Square
         const startRow = 3 * Math.floor(row / 3); // Calculate the starting row of the 3x3 box
         const startCol = 3 * Math.floor(col / 3); // Calculate the starting column of the 3x3 box
         const boxRow = startRow + Math.floor(i / 3); // Calculate the row index within the 3x3 box
         const boxCol = startCol + (i % 3); // Calculate the column index within the 3x3 box
-
         if (board[boxRow][boxCol] === num) return false; // If the number is found in the 3x3 box, return false
     }
     return true; // If the number is not found in the row, column, or 3x3 box, return true (valid placement)
@@ -132,40 +128,61 @@ function isValid(board, row, col, num) {
 
 function updateLivesDisplay() {
     const livesDisplay = document.getElementById("lives-count");
-    if(livesDisplay) {
+    const statusContainer = document.getElementById("status");
+    if (livesDisplay) {
         livesDisplay.innerText = lives; // Update the displayed number of lives
     }
     if (lives === 1 && statusContainer) {
-        statusContainer.classList.add("last-life"); // מוסיף את העיצוב האדום
+        statusContainer.classList.add("last-life"); // Add a class to visually indicate that the player is on their last life
     } else if (lives > 1 && statusContainer) {
-        statusContainer.classList.remove("last-life"); // מחזיר למצב רגיל אם עשינו ריסטרט
+        statusContainer.classList.remove("last-life"); // Remove the last-life class if the player has more than one life
     }
 }
 
+function GameOverScreen() {
+    const screen = document.getElementById("Game-over-screen");
+    if (screen) {
+        screen.classList.remove("hidden");
+    }
+}
 
-function solveSudoku(board) {
-    for(let row=0; row<9; row++){
-        for(let col=0; col<9; col++){
-            if(board[row][col]===0){ // If the cell is empty
-                // Try placing numbers 1-9 in the empty cell
-                for(let num=1; num<=9; num++){
-                    if(isValid(board, row, col, num)){ // If placing the number is valid according to Sudoku rules
-                        board[row][col]=num; // Place the number in the cell
-                        if(solveSudoku(board)) return true; // Recursively attempt to solve the rest of the board
-                        board[row][col]=0; // If it doesn't lead to a solution, reset the cell and try the next number
+function hasSolution(board) {
+    // Check every cell in the board
+    for(let row = 0; row < 9; row++) {
+        for(let col = 0; col < 9; col++) {
+            if(board[row][col] === 0) { //found an empty cell, try to fill it with a valid number
+                for(let num = 1; num <= 9; num++) { // try numbers 1-9
+                    if(isValid(board, row, col, num)) { //check if placing the number in the current cell is valid according to the rules
+                        board[row][col] = num; 
+                        if(hasSolution(board)) return true; //try to fill the rest of the board, if it returns true, we are done
+                        board[row][col] = 0; //if it didn't work reset the cell and try the next number
                     }
                 }
-                return false; // If no number 1-9 can be placed in the empty cell, return false to trigger backtracking
+                return false; // Triggers backtracking if no valid number can be placed in the current empty cell
             }
         }
     }
-    return true; // If the entire board is filled without conflicts, return true (solved)
+    return true; // If we went through the entire board without finding any empty cells, it means we have a valid solution
 }
 
-function GameOverScreen(){
-    const screen = document.getElementById("Game-over-screen");
-    if(screen){
-        screen.classList.remove("hidden");
+function generateFullBoard(board) {
+    // check every cell in the board
+    for (let row = 0; row < 9; row++) {
+        for (let col = 0; col < 9; col++) {
+            //looking for empty cell, if found, try to fill it with a valid number
+            if (board[row][col] === 0) {
+                let nums = [1, 2, 3, 4, 5, 6, 7, 8, 9].sort(() => Math.random() - 0.5); // shuffle numbers 1-9 so evertime we generate a board, it will be different 
+                for (let num of nums) {  // try numbers 1-9 in random order
+                    //check if placing the number in the current cell is valid according to the rules
+                    if (isValid(board, row, col, num)) {
+                        board[row][col] = num; // place the number in the cell
+                        if (generateFullBoard(board)) return true; //try to fill the rest of the board, if it returns true, we are done
+                        board[row][col] = 0; // if it didn't work reset the cell and try the next number
+                    }
+                }
+                return false; // Triggers backtracking
+            }
+        }
     }
-
+    return true; // Board is full
 }
