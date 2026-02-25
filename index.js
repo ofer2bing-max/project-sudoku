@@ -169,10 +169,14 @@ function getBoardArray() {
 }
 // --- 4. Logic & Algorithms ---
 function isValid(board, row, col, num) { // Check if placing the number in the specified row and column is valid according to Sudoku rules (no duplicates in the same row, column, or 3x3 subgrid)
+    const startCol = 3 * Math.floor(col / 3);
+    const startRow = 3 * Math.floor(row / 3);
+
     for (let i = 0; i < 9; i++) {
-        if (board[row][i] === num || board[i][col] === num) return false; 
-        const startCol = 3 * Math.floor(col / 3);
-        if (board[startRow + Math.floor(i / 3)][startCol + (i % 3)] === num) return false;
+        if (board[row][i] === num || board[i][col] === num) return false;   
+        const subgridRow = startRow + Math.floor(i / 3);
+        const subgridCol = startCol + (i % 3);
+        if (board[subgridRow][subgridCol] === num) return false;
     }
     return true;
 }
