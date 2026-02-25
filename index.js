@@ -1,275 +1,253 @@
+// --- Global Variables ---
+// Difficulty levels mapped to the number of holes to dig
 const difficultyLevels = {
-    "easy": 35,   // Number of holes to dig for easy difficulty
-    "medium": 45, // Number of holes to dig for medium difficulty
-    "hard": 55,   // Number of holes to dig for hard difficulty
-    "expert": 60   // Number of holes to dig for expert difficulty
+    "easy": 35,
+    "medium": 45,
+    "hard": 55,
+    "expert": 60
 };
-let selectedNumber = null;  // This will hold the currently selected number (1-9) or "" for eraser
-let isMarkSmallMode = false;    // This will track if we're in "Mark Small" mode or not
-let lives = 3;   // Number of lives the player has (for error tracking)
-let currentDifficulty = "medium"; // Default difficulty level
 
-function handleCellInputs(cell){
-    if(selectedNumber === null) return;
-    if(cell.classList.contains("fixed")) return; // Don't allow changes to fixed cells
+let selectedNumber = null; // Tracks the currently selected number for input
+let isMarkSmallMode = false; // Flag to indicate if the player is in "mark small numbers" mode
+let lives = 3;
+let currentDifficulty = "medium";
+let intialBoard = []; // Persistent storage for the level's starting clues
 
-    if(selectedNumber === ""){ // If eraser is selected, clear the cell
-        cell.value = "";
-        cell.classList.remove("small-text", "error") // Remove any classes that might be there
-        return;
-    }
-    
-    const board=document.getElementById("sudoku-game");
-     const allInputs = Array.from(board.querySelectorAll("input"));
-     const index = allInputs.indexOf(cell);
-    const row = Math.floor(index / 9);
-    const col = index % 9;
-
-    if(isMarkSmallMode){
-        // PENCIL MARK LOGIC
-        cell.classList.add("small-text"); 
-        // If number is already there, remove it. If not, add it.
-        if(cell.value.includes(selectedNumber)){
-            cell.value = cell.value.replace(selectedNumber, "");
-        } else {
-            cell.value = (cell.value + selectedNumber).split('').sort().join(''); // Add the selected number to the cell's value and sort the digits for better readability
-        }
-    } else {
-        // NORMAL PLACEMENT LOGIC
-        const currentGrid = getBoardArray(); // Get the current state of the board as a 2D array for validation
-        const numToPlace = parseInt(selectedNumber); // Convert the selected number to an integer for validation
-
-        if(isValid(currentGrid, row, col, numToPlace)){ // If the placement is valid according to Sudoku rules
-            cell.classList.remove("small-text", "error") // Remove any classes that might be there
-            cell.value = selectedNumber; // Place the selected number in the cell
-        }
-        else {
-            lives--;
-            updateLivesDisplay();
-            cell.value = selectedNumber; // Temporarily show the incorrect number to give feedback to the player
-            cell.classList.add("error"); // Add an error class to indicate invalid placement
-
-            setTimeout(() => {
-                if(lives <= 0){
-                    GameOverScreen();
-                }
-                else {
-                    cell.value = ""; // Clear the incorrect number after a short delay to give visual feedback
-                    cell.classList.remove("error"); // Remove the error class after a short delay to give visual feedback
-                }
-            }, 1000); // Delay of 1 second to allow the player to see the feedback before clearing the cell or showing game over 
-        }
-    }
-}
-document.addEventListener("DOMContentLoaded", () => {   // Wait for the DOM to load before running the script
-    const board = document.getElementById("sudoku-game");   // The container for the Sudoku grid
-    const numButtons = document.querySelectorAll(".number-btn");    // The buttons for selecting numbers (1-9)
-    const markSmallBtn = document.getElementById("mark-small"); // The button for toggling "Mark Small" mode
-
-    // 1. Create the 81 input boxes
+// --- 1. Initialization ---
+document.addEventListener("DOMContentLoaded", () => { // Ensure the DOM is fully loaded before accessing elements and initializing the game
+    const board = document.getElementById("sudoku-game"); 
+    const numButtons = document.querySelectorAll(".number-btn"); 
+    const markSmallBtn = document.getElementById("mark-small"); 
+    // Create 81 input cells for the Sudoku board
     for (let i = 0; i < 81; i++) {
-        const input = document.createElement("input");  // Create an input element for each cell in the Sudoku grid
-        input.type = "text";    // Set the input type to text 
-        input.readOnly = true;   // User must use your buttons
-
-        input.addEventListener("click", function() { // When an input box is clicked
-           handleCellInputs(this);
+        const input = document.createElement("input");
+        input.type = "text"; 
+        input.readOnly = true; 
+        input.addEventListener("click", function() {
+           handleCellInputs(this); 
         });
-           board.appendChild(input); // Add the input element to the Sudoku grid container
+        board.appendChild(input); 
     }
-
-    // 2. Select a number (1-9)
-    numButtons.forEach(btn => {
+    // Number button event listeners
+    numButtons.forEach(btn => { 
         btn.addEventListener("click", () => {
-            numButtons.forEach(b => b.classList.remove("selected-number")); // Remove the "selected-number" class from all number buttons
-            document.getElementById("clear").classList.remove("selected-number"); // Remove the "selected-number" class from the clear button
-            btn.classList.add("selected-number"); // Add the "selected-number" class to the clicked button to visually indicate it's selected
-            selectedNumber = btn.getAttribute("data-number"); // Update the selectedNumber variable to the number associated with the clicked button (or "" for eraser)
+            numButtons.forEach(b => b.classList.remove("selected-number"));
+            document.getElementById("clear").classList.remove("selected-number");
+            btn.classList.add("selected-number");
+            selectedNumber = btn.getAttribute("data-number");
         });
     });
-
-    // 3. Toggle Mark Small Mode
+    // Mark small numbers button event listener
     markSmallBtn.addEventListener("click", () => {
-        isMarkSmallMode = !isMarkSmallMode; // Toggle the "Mark Small" mode on or off
-        markSmallBtn.classList.toggle("active-mark"); // Toggle the "active-mark" class on the button to visually indicate whether "Mark Small" mode is active or not
+        isMarkSmallMode = !isMarkSmallMode; // Toggle the mode
+        markSmallBtn.classList.toggle("active-mark"); // Update button appearance based on mode
     });
-
-    // 4. Eraser tool
-    document.getElementById("clear").addEventListener("click", () => {
-        numButtons.forEach(b => b.classList.remove("selected-number"));
-        selectedNumber = ""; // Set selectedNumber to an empty string to indicate that the eraser is selected
-        document.getElementById("clear").classList.add("selected-number")
+    // Clear selection button event listener
+    document.getElementById("clear").addEventListener("click", () => { // Clear the selected number and update button states
+        numButtons.forEach(b => b.classList.remove("selected-number")); // Deselect all number buttons
+        selectedNumber = ""; // Set selectedNumber to empty string to indicate clearing input
+        document.getElementById("clear").classList.add("selected-number"); // Highlight the clear button to indicate it's active
     }); 
-
-    // 5. Restart
+    
+    // Restart button resets the game state and re-renders the initial board clues
     document.getElementById("restart").addEventListener("click", () => {
-        location.reload(); // Reload the page to reset the game
+        lives = 3;
+        updateLivesDisplay();
+        
+        const screen = document.getElementById("Game-over-screen");
+        if (screen) screen.classList.add("hidden");
+
+        // Re-render the saved initial board clues
+        renderBoard(intialBoard);
     });
-    startGame(); // Call the function to start the game (you can implement this function to generate a new Sudoku board and populate the grid)
+
+    startGame();
 });
-function startGame(level=currentDifficulty) {
-    let board = Array.from({ length: 9 }, () => Array(9).fill(0));
-    lives = 3; // Reset lives at the start of the game
-    updateLivesDisplay(); // Update the lives display to reflect the reset lives  
-    generateFullBoard(board); // Generate a complete Sudoku board using backtracking
 
+// --- 2. Game Core ---
+function startGame(level = currentDifficulty) { // Default to currentDifficulty if no level is provided
+    let board = Array.from({ length: 9 }, () => Array(9).fill(0)); // Create an empty 9x9 board
+    lives = 3;
+    updateLivesDisplay();
+
+    generateFullBoard(board); // Generate a complete Sudoku board
     const holesToDig = difficultyLevels[level]; // Get the number of holes to dig based on the selected difficulty level
-    digHoles(board, holesToDig); // Dig holes in the board to create the puzzle while ensuring it has a unique solution
-
-    const inputs = document.querySelectorAll("#sudoku-game input"); // Get all the input elements in the Sudoku grid
-    inputs.forEach(inputs => {
-        inputs.value = "";
-        inputs.classList.remove("fixed", "small-text", "error"); // Clear any classes that might be there
+    digHoles(board, holesToDig); // Dig holes to create the puzzle based on the difficulty level
+    
+    // Save the deep copy of the puzzle
+    intialBoard = board.map(row => [...row]); // Deep copy to preserve the initial state of the board for restarting the game
+    renderBoard(intialBoard); // Render the initial board with clues based on the generated puzzle
+}
+// Renders the Sudoku board by populating the input cells with the values from the provided board array. It also applies the "fixed" class to cells that contain clues and resets any previous input or error states.
+function renderBoard(board) {
+    const inputs = document.querySelectorAll("#sudoku-game input"); // Select all input cells in the Sudoku board
+    inputs.forEach(input => { // Clear all input cells and remove any previous classes (fixed, small-text, error)
+        input.value = ""; 
+        input.classList.remove("fixed", "small-text", "error"); 
     });
-
-    for(let i=0;i<81;i++){
+    // Populate the cells with the values from the board array and apply the "fixed" class to clue cells
+    for (let i = 0; i < 81; i++) {
         const row = Math.floor(i / 9);
         const col = i % 9;
-        if(board[row][col] !== 0){
-            inputs[i].value = board[row][col];
-            inputs[i].classList.add("fixed"); // Add a class to indicate that this cell is a fixed clue and cannot be changed by the player
+        const value = board[row][col]; // Get the value from the board array for the current cell
+        if (value !== 0) { // If the value is not 0, it means it's a clue and should be rendered as a fixed cell
+            inputs[i].value = value; // Set the cell value to the clue number
+            inputs[i].classList.add("fixed"); // Add the "fixed" class to indicate that this cell is a clue and cannot be changed by the player
         }
     }
-
 }
-// Function to get the current state of the board as a 2D array for validation purposes
-function getBoardArray() {
-    const boardDiv = document.getElementById("sudoku-game");
-    const inputs = boardDiv.querySelectorAll("input");
-    let grid = [];
 
-    for (let r = 0; r < 9; r++) {
-        let rowData = [];
-        for (let c = 0; c < 9; c++) {
-            let index = r * 9 + c;
-            let val = inputs[index].value;
-            if (val.length === 1 && !inputs[index].classList.contains("small-text")) {
-                rowData.push(parseInt(val));
-            } else {
-                rowData.push(0); // Treat empty cells and pencil marks as 0 for validation purposes
-            }
+// --- 3. Input & Validation ---
+function handleCellInputs(cell) {
+    if (selectedNumber === null) return;// If no number is selected, do nothing when a cell is clicked
+    if (cell.classList.contains("fixed")) return; // If the cell is a fixed clue, do nothing when it's clicked
+
+    if (selectedNumber === "") {// If the clear button is selected, clear the cell value and remove any small text or error classes
+        cell.value = "";
+        cell.classList.remove("small-text", "error");
+        return;// Exit the function after clearing the cell
+    }
+    
+    const boardElement = document.getElementById("sudoku-game"); // Get the Sudoku board element to calculate the row and column of the clicked cell
+    const allInputs = Array.from(boardElement.querySelectorAll("input")); // Get all input cells in the Sudoku board as an array to determine the index of the clicked cell
+    const index = allInputs.indexOf(cell); // Find the index of the clicked cell in the array of input cells to calculate its row and column
+    const row = Math.floor(index / 9); // Calculate the row number based on the index of the cell (integer division by 9)
+    const col = index % 9; // Calculate the column number based on the index of the cell (remainder when divided by 9)
+
+    // If the player is in "mark small numbers" mode, toggle the presence of the selected number in the cell's value and apply the "small-text" class for styling
+    if (isMarkSmallMode) {
+        cell.classList.add("small-text"); 
+        if (cell.value.includes(selectedNumber)) { 
+            cell.value = cell.value.replace(selectedNumber, ""); 
+        } else {
+            cell.value = (cell.value + selectedNumber).split('').sort().join(''); // Add the selected number to the cell's value and sort the characters to keep them in order for better readability
         }
-        grid.push(rowData);
-    }
-    return grid;
-}
-// Function to check if placing a number in a specific cell is valid according to Sudoku rules
-function isValid(board, row, col, num) {
-    for (let i = 0; i < 9; i++) {
-        if (board[row][i] === num || board[i][col] === num) return false;
-        const startRow = 3 * Math.floor(row / 3); // Calculate the starting row of the 3x3 box
-        const startCol = 3 * Math.floor(col / 3); // Calculate the starting column of the 3x3 box
-        const boxRow = startRow + Math.floor(i / 3); // Calculate the row index within the 3x3 box
-        const boxCol = startCol + (i % 3); // Calculate the column index within the 3x3 box
-        if (board[boxRow][boxCol] === num) return false; // If the number is found in the 3x3 box, return false
-    }
-    return true; // If the number is not found in the row, column, or 3x3 box, return true (valid placement)
-}
+    } else { // If not in "mark small numbers" mode, validate the selected number against the current board state and either place it in the cell or handle it as an error if it's invalid according to Sudoku rules
+        const currentGrid = getBoardArray(); 
+        const numToPlace = parseInt(selectedNumber); 
 
-// Backtracking algorithm to check if the current board state has a valid solution
-function hasSolution(board) {
-    // Check every cell in the board
-    for(let row = 0; row < 9; row++) {
-        for(let col = 0; col < 9; col++) {
-            if(board[row][col] === 0) { //found an empty cell, try to fill it with a valid number
-                for(let num = 1; num <= 9; num++) { // try numbers 1-9
-                    if(isValid(board, row, col, num)) { //check if placing the number in the current cell is valid according to the rules
-                        board[row][col] = num; 
-                        if(hasSolution(board)) return true; //try to fill the rest of the board, if it returns true, we are done
-                        board[row][col] = 0; //if it didn't work reset the cell and try the next number
-                    }
+        if (isValid(currentGrid, row, col, numToPlace)) { // If the selected number is valid according to Sudoku rules, place it in the cell and remove any error or small text classes
+            cell.classList.remove("small-text", "error");// Remove any classes that indicate small marks or errors since the input is valid
+            cell.value = selectedNumber;// Set the cell value to the selected number since it's a valid input
+        } else {
+            lives--;// Decrement the player's lives for an incorrect input and
+            updateLivesDisplay();
+            cell.value = selectedNumber; // Temporarily show the incorrect number in the cell to provide feedback to the player before clearing it
+            cell.classList.add("error");// Add the "error" class to style the cell with a red background to indicate that the input is incorrect
+
+            setTimeout(() => {// After a short delay, check if the player has run out of lives and show the game over screen if so, or clear the cell and remove the error class to allow the player to try again
+                if (lives <= 0) {
+                    GameOverScreen();
+                } else {
+                    cell.value = "";
+                    cell.classList.remove("error");
                 }
-                return false; // Triggers backtracking if no valid number can be placed in the current empty cell
-            }
+            }, 1000);// Delay of 1 second to allow the player to see the incorrect input before it is cleared and the error styling is removed
         }
     }
-    return true; // If we went through the entire board without finding any empty cells, it means we have a valid solution
 }
-// Backtracking algorithm to generate a complete Sudoku board
+// This function reads the current values from the input cells on the board and constructs a 2D array representing the current state of the Sudoku board. It checks for valid single-digit inputs that are not marked as small text or errors to ensure that only valid numbers are included in the board array for validation purposes.
+function getBoardArray() {
+    const inputs = document.querySelectorAll("#sudoku-game input"); // Select all input cells in the Sudoku board to read their values and construct the board array
+    let grid = []; // Initialize an empty array to hold the rows of the board
+    for (let r = 0; r < 9; r++) {// Loop through each row of the board to construct the 2D array representation of the current board state for validation purposes
+        let rowData = []; // Initialize an empty array to hold the values for the current row
+        for (let c = 0; c < 9; c++) { // Calculate the index of the current cell based on its row and column to access its value from the inputs array
+            let index = r * 9 + c;
+            let inputCell = inputs[index]; 
+            let val = inputCell.value; 
+
+            if (val.length === 1 && !inputCell.classList.contains("small-text") && !inputCell.classList.contains("error")) { // If the value is a single character and the cell is not marked as small text or error, parse it as an integer and add it to the row array; otherwise, add 0 to represent an empty cell in the board array
+                rowData.push(parseInt(val));
+            } else { // If the cell is empty, marked as small text, or marked as an error, treat it as an empty cell in the board array by adding 0 to the row array to indicate that there is no valid number in that cell for validation purposes
+                rowData.push(0); 
+            }
+        }
+        grid.push(rowData);// After processing all columns for the current row, add the row array to the grid array to build the complete 2D array representation of the current board state for validation purposes
+    }
+    return grid; 
+}
+// --- 4. Logic & Algorithms ---
+function isValid(board, row, col, num) { // Check if placing the number in the specified row and column is valid according to Sudoku rules (no duplicates in the same row, column, or 3x3 subgrid)
+    for (let i = 0; i < 9; i++) {
+        if (board[row][i] === num || board[i][col] === num) return false; 
+        const startCol = 3 * Math.floor(col / 3);
+        if (board[startRow + Math.floor(i / 3)][startCol + (i % 3)] === num) return false;
+    }
+    return true;
+}
+// This function generates a complete Sudoku board by recursively filling in numbers while ensuring that the placement of each number is valid according to Sudoku rules. 
+// It uses backtracking to explore different number placements and shuffles the order of numbers to create a unique solution each time.
 function generateFullBoard(board) {
-    // check every cell in the board
     for (let row = 0; row < 9; row++) {
         for (let col = 0; col < 9; col++) {
-            //looking for empty cell, if found, try to fill it with a valid number
-            if (board[row][col] === 0) {
-                let nums = [1, 2, 3, 4, 5, 6, 7, 8, 9].sort(() => Math.random() - 0.5); // shuffle numbers 1-9 so evertime we generate a board, it will be different 
-                for (let num of nums) {  // try numbers 1-9 in random order
-                    //check if placing the number in the current cell is valid according to the rules
+            if (board[row][col] === 0) {// If the current cell is empty, attempt to fill it with a valid number
+                let nums = [1, 2, 3, 4, 5, 6, 7, 8, 9].sort(() => Math.random() - 0.5); // Shuffle the numbers 1-9 to ensure a unique solution each time the board is generated by randomizing the order of the numbers before trying to place them in the cell
+                for (let num of nums) { // Iterate through the shuffled numbers and attempt to place each one in the current cell, checking if it's valid according to Sudoku rules before placing it; if a valid placement is found, recursively call the function to fill the next empty cell; if the recursive call returns true, it means the board is successfully filled and we can return true; if not, reset the cell to 0 and continue trying other numbers until all options are exhausted
                     if (isValid(board, row, col, num)) {
-                        board[row][col] = num; // place the number in the cell
-                        if (generateFullBoard(board)) return true; //try to fill the rest of the board, if it returns true, we are done
-                        board[row][col] = 0; // if it didn't work reset the cell and try the next number
+                        board[row][col] = num;
+                        if (generateFullBoard(board)) return true;
+                        board[row][col] = 0;
                     }
                 }
-                return false; // Triggers backtracking
+                return false;
             }
         }
     }
-    return true; // Board is full
+    return true;
 }
+// This function counts the number of valid solutions for the given Sudoku board by recursively trying to fill in empty cells with valid numbers and backtracking when necessary.
+// It increments the count each time a complete valid solution is found and stops counting if more than one solution is detected to ensure that the puzzle has a unique solution.
 function countSolutions(board) {
     let count = 0;
-    function solve() {
-        for(let row = 0; row < 9; row++) {
-            for(let col = 0; col < 9; col++) {
-                if(board[row][col] === 0) {
-                    for(let num = 1; num <= 9; num++) {
-                        if(isValid(board, row, col, num)) {
+    function solve() { 
+        for (let row = 0; row < 9; row++) {
+            for (let col = 0; col < 9; col++) {
+                if (board[row][col] === 0) {
+                    for (let num = 1; num <= 9; num++) {
+                        if (isValid(board, row, col, num)) {
                             board[row][col] = num;
                             solve();
                             board[row][col] = 0;
-                            if(count > 1) return; // If we find more than one solution, we can stop counting
+                            if (count > 1) return;
                         }
                     }
                     return;
                 }
             }
         }
-        count++; // Found a valid solution, increment the count
+        count++;
     }
     solve();
     return count;
 }
-
+// This function digs holes in the completed Sudoku board by randomly selecting cells and clearing their values while ensuring that the resulting puzzle still has a unique solution.
+// It continues to dig holes until the desired number of holes is reached or a maximum number of attempts is exceeded to prevent infinite loops in cases where it's difficult to maintain a unique solution.
 function digHoles(board, holesToDig) {
     let holesDug = 0;
     let attempts = 0;
-    const maxAttempts = 200; // Limit the number of attempts to prevent infinite loops
-    while (holesDug < holesToDig && attempts < maxAttempts) {
+    while (holesDug < holesToDig && attempts < 200) {
         const row = Math.floor(Math.random() * 9);
         const col = Math.floor(Math.random() * 9);
-        if (board[row][col] !== 0) { // Only dig a hole if the cell is not already empty
-            const temp = board[row][col];
-            let backup = board[row][col]; // Backup the value before digging
-            board[row][col] = 0; // Dig the hole by setting the cell to 0
-            if(countSolutions(board) === 1) { // Check if the board still has a unique solution after digging
-                holesDug++; // If it does, increment the count of holes dug
+        if (board[row][col] !== 0) {
+            const backup = board[row][col]; 
+            board[row][col] = 0;
+            if (countSolutions(board) === 1) {
+                holesDug++;
             } else {
-                board[row][col]=backup; // If it doesn't, restore the original value to maintain a unique solution
+                board[row][col] = backup;
             }
         }
-        attempts++; // Increment the attempt counter
+        attempts++;
     }
 }
-
-
-// Function to update the display of lives and visually indicate when the player is on their last life
+// --- 5. UI Updates ---
 function updateLivesDisplay() {
     const livesDisplay = document.getElementById("lives-count");
-    const statusContainer = document.getElementById("status");
-    if (livesDisplay) {
-        livesDisplay.innerText = lives; // Update the displayed number of lives
-    }
-    if (lives === 1 && statusContainer) {
-        statusContainer.classList.add("last-life"); // Add a class to visually indicate that the player is on their last life
-    } else if (lives > 1 && statusContainer) {
-        statusContainer.classList.remove("last-life"); // Remove the last-life class if the player has more than one life
-    }
+    if (livesDisplay) livesDisplay.innerText = lives;
 }
-// Function to show the Game Over screen when the player runs out of lives
+
 function GameOverScreen() {
     const screen = document.getElementById("Game-over-screen");
-    if (screen) {
-        screen.classList.remove("hidden");
-    }
+    if (screen) screen.classList.remove("hidden");
 }
