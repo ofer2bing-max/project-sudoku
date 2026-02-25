@@ -9,9 +9,15 @@
 <body>
 
     <h1>Sudoku game</h1>
+
+    <div class="difficulty">
+        <button onclick="startGame('easy')">Easy</button>
+        <button onclick="startGame('medium')">Medium</button>
+        <button onclick="startGame('hard')">Hard</button>
+        <button onclick="startGame('expert')">Expert</button>
+    </div>
     
     <div id="status">lives: <span id="lives-count">3</span>/3</div>
-
     <div id="sudoku-game"></div>
 
     <div class="controls">

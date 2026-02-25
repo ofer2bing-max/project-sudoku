@@ -1,6 +1,13 @@
+const difficultyLevels = {
+    "easy": 35,   // Number of holes to dig for easy difficulty
+    "medium": 45, // Number of holes to dig for medium difficulty
+    "hard": 55,   // Number of holes to dig for hard difficulty
+    "expert": 60   // Number of holes to dig for expert difficulty
+};
 let selectedNumber = null;  // This will hold the currently selected number (1-9) or "" for eraser
 let isMarkSmallMode = false;    // This will track if we're in "Mark Small" mode or not
 let lives = 3;   // Number of lives the player has (for error tracking)
+let currentDifficulty = "medium"; // Default difficulty level
 
 function handleCellInputs(cell){
     if(selectedNumber === null) return;
@@ -20,12 +27,12 @@ function handleCellInputs(cell){
 
     if(isMarkSmallMode){
         // PENCIL MARK LOGIC
-        cell.classList.add("small-text");
+        cell.classList.add("small-text"); 
         // If number is already there, remove it. If not, add it.
         if(cell.value.includes(selectedNumber)){
             cell.value = cell.value.replace(selectedNumber, "");
         } else {
-            cell.value = (cell.value + selectedNumber).split('').sort().join('');
+            cell.value = (cell.value + selectedNumber).split('').sort().join(''); // Add the selected number to the cell's value and sort the digits for better readability
         }
     } else {
         // NORMAL PLACEMENT LOGIC
@@ -50,7 +57,7 @@ function handleCellInputs(cell){
                     cell.value = ""; // Clear the incorrect number after a short delay to give visual feedback
                     cell.classList.remove("error"); // Remove the error class after a short delay to give visual feedback
                 }
-            }, 1000); // Delay of 1 second to allow the player to see the feedback before clearing the cell or showing game over
+            }, 1000); // Delay of 1 second to allow the player to see the feedback before clearing the cell or showing game over 
         }
     }
 }
@@ -100,17 +107,30 @@ document.addEventListener("DOMContentLoaded", () => {   // Wait for the DOM to l
     });
     startGame(); // Call the function to start the game (you can implement this function to generate a new Sudoku board and populate the grid)
 });
-function startGame() {
+function startGame(level=currentDifficulty) {
     let board = Array.from({ length: 9 }, () => Array(9).fill(0));
+    lives = 3; // Reset lives at the start of the game
+    updateLivesDisplay(); // Update the lives display to reflect the reset lives  
     generateFullBoard(board); // Generate a complete Sudoku board using backtracking
 
-    const inputs = document.querySelectorAll("#sudoku-game input");
-    for (let i = 0; i < 81; i++) {
+    const holesToDig = difficultyLevels[level]; // Get the number of holes to dig based on the selected difficulty level
+    digHoles(board, holesToDig); // Dig holes in the board to create the puzzle while ensuring it has a unique solution
+
+    const inputs = document.querySelectorAll("#sudoku-game input"); // Get all the input elements in the Sudoku grid
+    inputs.forEach(inputs => {
+        inputs.value = "";
+        inputs.classList.remove("fixed", "small-text", "error"); // Clear any classes that might be there
+    });
+
+    for(let i=0;i<81;i++){
         const row = Math.floor(i / 9);
         const col = i % 9;
-        inputs[i].value = board[row][col]; // Set the value of each input box to the corresponding number from the generated board
-        inputs[i].classList.add("fixed"); // Add the "fixed" class to indicate that these cells are pre-filled and cannot be changed by the player
+        if(board[row][col] !== 0){
+            inputs[i].value = board[row][col];
+            inputs[i].classList.add("fixed"); // Add a class to indicate that this cell is a fixed clue and cannot be changed by the player
+        }
     }
+
 }
 // Function to get the current state of the board as a 2D array for validation purposes
 function getBoardArray() {
@@ -187,6 +207,52 @@ function generateFullBoard(board) {
     }
     return true; // Board is full
 }
+function countSolutions(board) {
+    let count = 0;
+    function solve() {
+        for(let row = 0; row < 9; row++) {
+            for(let col = 0; col < 9; col++) {
+                if(board[row][col] === 0) {
+                    for(let num = 1; num <= 9; num++) {
+                        if(isValid(board, row, col, num)) {
+                            board[row][col] = num;
+                            solve();
+                            board[row][col] = 0;
+                            if(count > 1) return; // If we find more than one solution, we can stop counting
+                        }
+                    }
+                    return;
+                }
+            }
+        }
+        count++; // Found a valid solution, increment the count
+    }
+    solve();
+    return count;
+}
+
+function digHoles(board, holesToDig) {
+    let holesDug = 0;
+    let attempts = 0;
+    const maxAttempts = 200; // Limit the number of attempts to prevent infinite loops
+    while (holesDug < holesToDig && attempts < maxAttempts) {
+        const row = Math.floor(Math.random() * 9);
+        const col = Math.floor(Math.random() * 9);
+        if (board[row][col] !== 0) { // Only dig a hole if the cell is not already empty
+            const temp = board[row][col];
+            let backup = board[row][col]; // Backup the value before digging
+            board[row][col] = 0; // Dig the hole by setting the cell to 0
+            if(countSolutions(board) === 1) { // Check if the board still has a unique solution after digging
+                holesDug++; // If it does, increment the count of holes dug
+            } else {
+                board[row][col]=backup; // If it doesn't, restore the original value to maintain a unique solution
+            }
+        }
+        attempts++; // Increment the attempt counter
+    }
+}
+
+
 // Function to update the display of lives and visually indicate when the player is on their last life
 function updateLivesDisplay() {
     const livesDisplay = document.getElementById("lives-count");

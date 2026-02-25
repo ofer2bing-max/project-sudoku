@@ -76,6 +76,26 @@ h1 {
 .selected-number { background-color: #bbb !important; border: 2px solid black; }
 .small-text { font-size: 10px !important; color: #666; line-height: 1; padding: 2px; }
 
+.difficulty {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.difficulty button {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 2px solid #3d7af5;
+    background: transparent;
+    color: #3d7af5;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.difficulty button:hover {
+    background: #3d7af5;
+    color: white;
+}
 
 .error {
     background-color: #ffcccc !important; 
