@@ -12,6 +12,7 @@ let isMarkSmallMode = false; // Flag to indicate if the player is in "mark small
 let lives = 3;
 let currentDifficulty = "medium";
 let intialBoard = []; // Persistent storage for the level's starting clues
+let moveHistory = [];
 
 // --- 1. Initialization ---
 document.addEventListener("DOMContentLoaded", () => { // Ensure the DOM is fully loaded before accessing elements and initializing the game
@@ -48,7 +49,9 @@ document.addEventListener("DOMContentLoaded", () => { // Ensure the DOM is fully
         selectedNumber = ""; // Set selectedNumber to empty string to indicate clearing input
         document.getElementById("clear").classList.add("selected-number"); // Highlight the clear button to indicate it's active
     }); 
-    
+    document.getElementById("undo").addEventListener("click", () => {
+        undo();
+    });
     // Restart button resets the game state and re-renders the initial board clues
     document.getElementById("restart").addEventListener("click", () => {
     resetGame();
@@ -93,50 +96,62 @@ function renderBoard(board) {
 
 // --- 3. Input & Validation ---
 function handleCellInputs(cell) {
-    if (selectedNumber === null) return;// If no number is selected, do nothing when a cell is clicked
-    if (cell.classList.contains("fixed")) return; // If the cell is a fixed clue, do nothing when it's clicked
+    if (selectedNumber === null || cell.classList.contains("fixed")) return;
 
-    if (selectedNumber === "") {// If the clear button is selected, clear the cell value and remove any small text or error classes
-        cell.value = "";
-        cell.classList.remove("small-text", "error");
-        return;// Exit the function after clearing the cell
-    }
-    
-    const boardElement = document.getElementById("sudoku-game"); // Get the Sudoku board element to calculate the row and column of the clicked cell
-    const allInputs = Array.from(boardElement.querySelectorAll("input")); // Get all input cells in the Sudoku board as an array to determine the index of the clicked cell
-    const index = allInputs.indexOf(cell); // Find the index of the clicked cell in the array of input cells to calculate its row and column
-    const row = Math.floor(index / 9); // Calculate the row number based on the index of the cell (integer division by 9)
-    const col = index % 9; // Calculate the column number based on the index of the cell (remainder when divided by 9)
+    // --- NEW: Helper to record the state BEFORE change ---
+    const recordMove = () => {
+        moveHistory.push({
+            cell: cell,
+            prevValue: cell.value,
+            prevClass: Array.from(cell.classList) // Stores small-text or error status
+        });
+    };
 
-    // If the player is in "mark small numbers" mode, toggle the presence of the selected number in the cell's value and apply the "small-text" class for styling
-    if (isMarkSmallMode) {
-        cell.classList.add("small-text"); 
-        if (cell.value.includes(selectedNumber)) { 
-            cell.value = cell.value.replace(selectedNumber, ""); 
-        } else {
-            cell.value = (cell.value + selectedNumber).split('').sort().join(''); // Add the selected number to the cell's value and sort the characters to keep them in order for better readability
+    if (selectedNumber === "") {
+        if (cell.value !== "") {
+            recordMove(); // Record before clearing
+            cell.value = "";
+            cell.classList.remove("small-text", "error");
         }
-    } else { // If not in "mark small numbers" mode, validate the selected number against the current board state and either place it in the cell or handle it as an error if it's invalid according to Sudoku rules
-        const currentGrid = getBoardArray(); 
-        const numToPlace = parseInt(selectedNumber); 
+        return;
+    }
 
-        if (isValid(currentGrid, row, col, numToPlace)) { // If the selected number is valid according to Sudoku rules, place it in the cell and remove any error or small text classes
-            cell.classList.remove("small-text", "error");// Remove any classes that indicate small marks or errors since the input is valid
-            cell.value = selectedNumber;// Set the cell value to the selected number since it's a valid input
+    // Get coordinates (same as your original)
+    const allInputs = Array.from(document.querySelectorAll("#sudoku-game input"));
+    const index = allInputs.indexOf(cell);
+    const row = Math.floor(index / 9);
+    const col = index % 9;
+
+    if (isMarkSmallMode) {
+        recordMove(); // Record before marking
+        cell.classList.add("small-text");
+        if (cell.value.includes(selectedNumber)) {
+            cell.value = cell.value.replace(selectedNumber, "");
         } else {
-            lives--;// Decrement the player's lives for an incorrect input and
-            updateLivesDisplay();
-            cell.value = selectedNumber; // Temporarily show the incorrect number in the cell to provide feedback to the player before clearing it
-            cell.classList.add("error");// Add the "error" class to style the cell with a red background to indicate that the input is incorrect
+            cell.value = (cell.value + selectedNumber).split('').sort().join('');
+        }
+    } else {
+        const currentGrid = getBoardArray();
+        const numToPlace = parseInt(selectedNumber);
 
-            setTimeout(() => {// After a short delay, check if the player has run out of lives and show the game over screen if so, or clear the cell and remove the error class to allow the player to try again
-                if (lives <= 0) {
-                    GameOverScreen();
-                } else {
+        if (isValid(currentGrid, row, col, numToPlace)) {
+            recordMove(); // Record before placing valid number
+            cell.classList.remove("small-text", "error");
+            cell.value = selectedNumber;
+        } else {
+            // Usually, we don't record "Errors" in undo history 
+            // because the game clears them automatically after 1 second.
+            lives--;
+            updateLivesDisplay();
+            cell.value = selectedNumber;
+            cell.classList.add("error");
+            setTimeout(() => {
+                if (lives <= 0) GameOverScreen();
+                else {
                     cell.value = "";
                     cell.classList.remove("error");
                 }
-            }, 1000);// Delay of 1 second to allow the player to see the incorrect input before it is cleared and the error styling is removed
+            }, 1000);
         }
     }
 }
@@ -256,4 +271,18 @@ function resetGame(){
      const GameOverScreen = document.getElementById("Game-over-screen");
     if(GameOverScreen)  GameOverScreen.classList.add("hidden");
     renderBoard(intialBoard);
+}
+function undo() {
+    if (moveHistory.length === 0) return;
+
+    // Get the last move from the stack
+    const lastMove = moveHistory.pop();
+    const cell = lastMove.cell;
+
+    // Restore value
+    cell.value = lastMove.prevValue;
+
+    // Restore classes (this fixes the "small-text" disappearing bug)
+    cell.className = ""; // Clear current classes
+    lastMove.prevClass.forEach(cls => cell.classList.add(cls));
 }
