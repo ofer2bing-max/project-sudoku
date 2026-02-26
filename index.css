@@ -71,6 +71,14 @@ h1 {
 #mark-small { background-color: green; }
 #restart { background-color: blue; }
 #clear { background-color: red; }
+#undo { 
+    background-color: #8a2be2; /* Blue-Violet color */
+    color: white;
+}
+
+#undo:hover {
+    background-color: #6a1b9a;
+} 
 
 .active-mark { background-color: darkred !important; }
 .selected-number { background-color: #bbb !important; border: 2px solid black; }

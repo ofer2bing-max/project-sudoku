@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Sudoku Master</title>
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
 
-    <h1>Sudoku game</h1>
+    <h1>Sudoku Game</h1>
 
     <div class="difficulty">
         <button onclick="startGame('easy')">Easy</button>
@@ -17,7 +17,8 @@
         <button onclick="startGame('expert')">Expert</button>
     </div>
     
-    <div id="status">lives: <span id="lives-count">3</span>/3</div>
+    <div id="status">Lives: <span id="lives-count">3</span>/3</div>
+
     <div id="sudoku-game"></div>
 
     <div class="controls">
@@ -34,9 +35,10 @@
         </div>
         
         <div class="button-actions">
-            <button id="restart">restart</button>
-            <button id="mark-small">mark small</button>
-            <button id="clear">clear</button>
+            <button id="restart">Restart</button>
+            <button id="mark-small">Mark Small</button>
+            <button id="clear">Clear</button>
+            <button id="undo">undo</button>
         </div>
     </div>
 
@@ -52,6 +54,6 @@
         </div>
     </div>
 
-   <script src="index.js"></script> 
+    <script src="index.js"></script> 
 </body>
 </html>
