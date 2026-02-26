@@ -51,21 +51,15 @@ document.addEventListener("DOMContentLoaded", () => { // Ensure the DOM is fully
     
     // Restart button resets the game state and re-renders the initial board clues
     document.getElementById("restart").addEventListener("click", () => {
-        lives = 3;
-        updateLivesDisplay();
-        
-        const screen = document.getElementById("Game-over-screen");
-        if (screen) screen.classList.add("hidden");
-
-        // Re-render the saved initial board clues
-        renderBoard(intialBoard);
-    });
+    resetGame();
+ });
 
     startGame();
 });
 
 // --- 2. Game Core ---
 function startGame(level = currentDifficulty) { // Default to currentDifficulty if no level is provided
+    document.getElementById("Game-over-screen").classList.add("hidden");
     let board = Array.from({ length: 9 }, () => Array(9).fill(0)); // Create an empty 9x9 board
     lives = 3;
     updateLivesDisplay();
@@ -254,4 +248,12 @@ function updateLivesDisplay() {
 function GameOverScreen() {
     const screen = document.getElementById("Game-over-screen");
     if (screen) screen.classList.remove("hidden");
+}
+
+function resetGame(){
+    lives=3;
+    updateLivesDisplay();
+     const GameOverScreen = document.getElementById("Game-over-screen");
+    if(GameOverScreen)  GameOverScreen.classList.add("hidden");
+    renderBoard(intialBoard);
 }
