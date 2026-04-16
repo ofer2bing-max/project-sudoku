@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => { // Ensure the DOM is fully
             document.getElementById("clear").classList.remove("selected-number");
             btn.classList.add("selected-number");
             selectedNumber = btn.getAttribute("data-number");
-            highlightAll(selectedNumber); // Highlight all cells with the same number as the selected number
+            highlightAllInstances(selectedNumber); // Highlight all cells with the same number as the selected number
         });
     });
     // Mark small numbers button event listener
