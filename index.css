@@ -7,6 +7,7 @@ body {
     cursor: pointer;
     flex-direction: column;
     font-family: sans-serif;
+    user-select: none;
 }
 h1 {
     text-align: center;
@@ -156,3 +157,18 @@ h1 {
 .play-again { background: #e8efff; color: #3d7af5; }
 .new-game { background: #3d7af5; color: white; }
 .hidden { display: none !important; }
+
+/* Highlights every instance of the selected number on the board */
+.highlight-same {
+    background-color: #d1e9ff !important; /* Soft blue highlight */
+    transition: background-color 0.1s ease; /* Makes the highlight pop in smoothly */
+}
+
+/* Ensure fixed numbers (clues) stay bold even when highlighted */
+.fixed.highlight-same {
+    background-color: #bbdefb !important; /* Slightly darker blue for clues */
+}
+
+.highlight-crosshair {
+    background-color: #f3f3f3 !important;
+}

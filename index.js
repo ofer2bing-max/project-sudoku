@@ -7,7 +7,7 @@ const difficultyLevels = {
     "expert": 60
 };
 
-let selectedNumber = null; // Tracks the currently selected number for input
+let selectedNumber = null; // Tracks the current selected number for input
 let isMarkSmallMode = false; // Flag to indicate if the player is in "mark small numbers" mode
 let lives = 3;
 let currentDifficulty = "medium";
@@ -36,6 +36,7 @@ document.addEventListener("DOMContentLoaded", () => { // Ensure the DOM is fully
             document.getElementById("clear").classList.remove("selected-number");
             btn.classList.add("selected-number");
             selectedNumber = btn.getAttribute("data-number");
+            highlightAll(selectedNumber); // Highlight all cells with the same number as the selected number
         });
     });
     // Mark small numbers button event listener
@@ -96,9 +97,14 @@ function renderBoard(board) {
 
 // --- 3. Input & Validation ---
 function handleCellInputs(cell) {
+    highlightAllInstances(cell.value ,cell); // Highlight all cells with the same number as the currently clicked cell to provide visual feedback on the current selection and potential duplicates
+    
     if (selectedNumber === null || cell.classList.contains("fixed")) return;
+    if (cell.value === selectedNumber && !cell.classList.contains("small-text")) {
+        return; // Do nothing if the number is already there
+    }
 
-    // --- NEW: Helper to record the state BEFORE change ---
+    //Helper to record the state BEFORE change ---
     const recordMove = () => {
         moveHistory.push({
             cell: cell,
@@ -138,6 +144,7 @@ function handleCellInputs(cell) {
             recordMove(); // Record before placing valid number
             cell.classList.remove("small-text", "error");
             cell.value = selectedNumber;
+            highlightAll(selectedNumber); // Update highlights after placing a number
         } else {
             // Usually, we don't record "Errors" in undo history 
             // because the game clears them automatically after 1 second.
@@ -271,6 +278,7 @@ function resetGame(){
      const GameOverScreen = document.getElementById("Game-over-screen");
     if(GameOverScreen)  GameOverScreen.classList.add("hidden");
     renderBoard(intialBoard);
+    highlightAllInstances(""); // Clear highlights when restarting the game
 }
 function undo() {
     if (moveHistory.length === 0) return;
@@ -285,4 +293,46 @@ function undo() {
     // Restore classes (this fixes the "small-text" disappearing bug)
     cell.className = ""; // Clear current classes
     lastMove.prevClass.forEach(cls => cell.classList.add(cls));
+}
+// This function highlights all cells that contain the same number as the currently selected number by adding a specific CSS class to those cells. It first removes the highlight from all cells to ensure that only the relevant cells are highlighted based on the current selection.
+function highlightAllInstances(targetNumber, clickedCell) {
+    const allInputs = Array.from(document.querySelectorAll("#sudoku-game input"));
+    const clickedIndex = allInputs.indexOf(clickedCell);
+    
+    // If user clicks outside or on nothing, just clear highlights
+    if (clickedIndex === -1) {
+        allInputs.forEach(input => input.classList.remove("highlight-same", "highlight-crosshair"));
+        return;
+    }
+
+    const targetRow = Math.floor(clickedIndex / 9);
+    const targetCol = clickedIndex % 9;
+
+    const boxRowStart = Math.floor(targetRow / 3) * 3;
+    const boxColStart = Math.floor(targetCol / 3) * 3;
+
+    allInputs.forEach((input, index) => {
+        input.classList.remove("highlight-same", "highlight-crosshair");
+
+        const currentRow = Math.floor(index / 9);
+        const currentCol = index % 9;
+
+        // Highlight Row, Column, AND 3x3 Box ---
+        const isInRow = (currentRow === targetRow);
+        const isInCol = (currentCol === targetCol);
+        const isInBox = (currentRow >= boxRowStart && currentRow < boxRowStart + 3 &&
+                         currentCol >= boxColStart && currentCol < boxColStart + 3);
+
+        if (isInRow || isInCol || isInBox) {
+            input.classList.add("highlight-crosshair");
+        }
+
+        // Highlight Matching Numbers
+        if (targetNumber && 
+            targetNumber !== "" && 
+            input.value === targetNumber && 
+            !input.classList.contains("small-text")) {
+            input.classList.add("highlight-same");
+        }
+    });
 }
