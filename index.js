@@ -14,6 +14,7 @@ let currentDifficulty = "medium";
 let initialBoard = []; // Persistent storage for the level's starting clues
 let moveHistory = []; // Stack to keep track of moves for undo functionality, storing the cell reference, previous value, and previous classes to allow accurate restoration of the cell's state when undoing a move
 let solvedBoard = []; // Store the fully solved board for potential future features like hints or solution reveal
+let score = 0; // Placeholder for score tracking, can be implemented based on time taken, number of moves, or other criteria in the future
 
 // --- 1. Initialization ---
 document.addEventListener("DOMContentLoaded", () => {
@@ -70,7 +71,9 @@ function startGame(level = currentDifficulty) {
   document.getElementById("Game-over-screen").classList.add("hidden");
   let board = Array.from({ length: 9 }, () => Array(9).fill(0)); // Create an empty 9x9 board
   lives = 3;
+  score = 0;
   updateLivesDisplay();
+  updateScoreDisplay();
 
   generateFullBoard(board); // Generate a complete Sudoku board
   solvedBoard = board.map((row) => [...row]); // Store the solved board for potential future use (e.g., hints or solution reveal)
@@ -152,8 +155,12 @@ function handleCellInputs(cell) {
       cell.classList.remove("small-text", "error");
       cell.value = selectedNumber;
       cell.classList.add("fixed"); // Mark the cell as fixed to prevent further changes
-      highlightAll(selectedNumber); // Update highlights after placing a number
+      score += 100; // Increment score for placing a correct number, can be used for future features like score tracking or leaderboards
+      updateScoreDisplay(); // Update the score display to reflect the new score after placing a correct number, providing feedback to the player on their progress and performance in the game
+      highlightAll(selectedNumber, cell); // Highlight all cells with the same number as the one just placed to provide visual feedback on the current selection and potential duplicates, enhancing the user experience when placing numbers in the Sudoku puzzle
     } else {
+      score = Math.max(0, score - 50); // score penalty cannot reduce below 0
+      updateScoreDisplay(); // Update the score display to reflect the new score after placing an incorrect number, providing feedback to the player on their performance and encouraging careful consideration when making moves in the game
       lives--;
       updateLivesDisplay();
       cell.value = selectedNumber;
@@ -256,6 +263,15 @@ function updateLivesDisplay() {
   const livesDisplay = document.getElementById("lives-count");
   if (livesDisplay) livesDisplay.innerText = lives;
 }
+// This function updates the score display by modifying the inner text of the element with the ID "score-count" to reflect the current score, providing visual feedback on the player's performance and progress in the game.
+function updateScoreDisplay() {
+  const scoreDisplay = document.getElementById("score-count"); // Get the element that displays the score to update it with the current score value, allowing players to see their score as they play and providing motivation to improve their performance in the game
+  if (scoreDisplay) {
+    // Check if the score display element exists before trying to update it to prevent errors in case the element is missing from the DOM, ensuring that the function can safely update the score display without causing issues in the game interface
+    scoreDisplay.innerText = score;
+  }
+}
+
 // This function displays the game over screen by removing the "hidden" class from the Game-over-screen element, allowing players to see the game over message and options when they run out of lives.
 function GameOverScreen() {
   const screen = document.getElementById("Game-over-screen");

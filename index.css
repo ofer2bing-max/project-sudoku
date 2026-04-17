@@ -158,7 +158,10 @@ h1 {
   color: red;
   animation: pulse 1s infinite;
 }
-
+#score-count {
+  color: #3d7af5; /* Matches your blue theme */
+  transition: all 0.3s ease;
+}
 @keyframes pulse {
   0% {
     opacity: 1;
@@ -233,4 +236,12 @@ h1 {
 
 .highlight-crosshair {
   background-color: lightcyan !important;
+}
+.score-up {
+  transform: scale(1.2);
+  color: #2ecc71 !important; /* Flash green */
+}
+.score-down {
+  transform: scale(0.8);
+  color: #e74c3c !important; /* Flash red */
 }
