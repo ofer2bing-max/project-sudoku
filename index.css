@@ -1,174 +1,236 @@
 body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    margin: 0;
-    cursor: pointer;
-    flex-direction: column;
-    font-family: sans-serif;
-    user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+  cursor: pointer;
+  flex-direction: column;
+  font-family: sans-serif;
+  user-select: none;
 }
 h1 {
-    text-align: center;
-    margin-bottom: 40px; 
-    font-size: 3em;
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 3em;
 }
 #sudoku-game {
-    display: grid;
-    grid-template-columns: repeat(9, 1fr);
-    grid-template-rows: repeat(9, 1fr);
-    width: 95vmin;
-    height: 95vmin;
-    max-width: 620px;
-    max-height: 620px;
-    margin: 10px auto;
-    cursor: pointer;
-    border: 4px solid black;
-    
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  grid-template-rows: repeat(9, 1fr);
+  width: 95vmin;
+  height: 105vmin;
+  max-width: 600px;
+  max-height: 600px;
+  margin: 10px auto;
+  cursor: pointer;
+  border: 4px solid black;
 }
 #sudoku-game input {
-    width: 100%;
-    height: 100%;
-    text-align: center;
-    font-size: clamp(1.5em, 4vmin, 28px);
-    box-sizing: border-box;
-    border: 1px solid grey;
-    cursor: pointer;
-    background: white;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  font-size: clamp(1.5em, 4vmin, 28px);
+  box-sizing: border-box;
+  border: 1px solid grey;
+  cursor: pointer;
+  background: white;
 }
 
 /* Thick lines for 3x3 boxes */
-#sudoku-game input:nth-child(3n) { border-right: 3px solid black; }
-#sudoku-game input:nth-child(9n) { border-right: 1px solid grey; } 
-#sudoku-game input:nth-child(n+19):nth-child(-n+27), 
-#sudoku-game input:nth-child(n+46):nth-child(-n+54) { border-bottom: 3px solid black; }
+#sudoku-game input:nth-child(3n) {
+  border-right: 3px solid black;
+}
+#sudoku-game input:nth-child(9n) {
+  border-right: 1px solid grey;
+}
+#sudoku-game input:nth-child(n + 19):nth-child(-n + 27),
+#sudoku-game input:nth-child(n + 46):nth-child(-n + 54) {
+  border-bottom: 3px solid black;
+}
 
 .controls {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
 }
 .number-btn {
-    margin: 5px;
-    padding: 10px 20px;
-    font-size: 18px;
-    cursor: pointer;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+  margin: 5px;
+  padding: 10px 20px;
+  font-size: 18px;
+  cursor: pointer;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 .button-actions button {
-    margin: 0 10px;
-    padding: 10px 20px;
-    font-size: 18px;
-    cursor: pointer;
-    border-radius: 5px;
-    color: white;
-    border: none;
+  margin: 0 10px;
+  padding: 10px 20px;
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: 5px;
+  color: white;
+  border: none;
 }
-#mark-small { background-color: green; }
-#restart { background-color: blue; }
-#clear { background-color: red; }
-#undo { 
-    background-color: #8a2be2; /* Blue-Violet color */
-    color: white;
+#mark-small {
+  background-color: green;
+}
+#restart {
+  background-color: blue;
+}
+#clear {
+  background-color: red;
+}
+#undo {
+  background-color: #8a2be2; /* Blue-Violet color */
+  color: white;
 }
 
 #undo:hover {
-    background-color: #6a1b9a;
-} 
+  background-color: #6a1b9a;
+}
 
-.active-mark { background-color: darkred !important; }
-.selected-number { background-color: #bbb !important; border: 2px solid black; }
-.small-text { font-size: 10px !important; color: #666; line-height: 1; padding: 2px; }
+.active-mark {
+  background-color: darkred !important;
+}
+.selected-number {
+  background-color: #bbb !important;
+  border: 2px solid black;
+}
+.small-text {
+  font-size: 10px !important;
+  color: #666;
+  line-height: 1;
+  padding: 2px;
+}
 
 .difficulty {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
 .difficulty button {
-    padding: 8px 16px;
-    border-radius: 20px;
-    border: 2px solid #3d7af5;
-    background: transparent;
-    color: #3d7af5;
-    font-weight: bold;
-    transition: 0.3s;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 2px solid #3d7af5;
+  background: transparent;
+  color: #3d7af5;
+  font-weight: bold;
+  transition: 0.3s;
 }
 
 .difficulty button:hover {
-    background: #3d7af5;
-    color: white;
+  background: #3d7af5;
+  color: white;
 }
 
 .error {
-    background-color: #ffcccc !important; 
-    color: #d8000c !important;         
-    border: 2px solid #ff3333 !important; 
-    animation: shake 0.2s ease-in-out 0s 2; 
+  background-color: #ffcccc !important;
+  color: #d8000c !important;
+  border: 2px solid #ff3333 !important;
+  animation: shake 0.2s ease-in-out 0s 2;
 }
 
 @keyframes shake {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(4px); }
-    75% { transform: translateX(-4px); }
-    100% { transform: translateX(0); }
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(4px);
+  }
+  75% {
+    transform: translateX(-4px);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
 
-#status { font-size: 1.5em; margin-bottom: 20px; font-weight: bold; }
-.last-life { color: red; animation: pulse 1s infinite; }
+#status {
+  font-size: 1.5em;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+.last-life {
+  color: red;
+  animation: pulse 1s infinite;
+}
 
 @keyframes pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 #Game-over-screen {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
 }
 #content-modal {
-    background: white;
-    padding: 30px;
-    border-radius: 24px;
-    width: 85%;
-    max-width: 320px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+  background: white;
+  padding: 30px;
+  border-radius: 24px;
+  width: 85%;
+  max-width: 320px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
-.menu-options { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+.menu-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
 .menu-options button {
-    padding: 15px; border: none; border-radius: 12px;
-    font-size: 18px; font-weight: bold; cursor: pointer;
+  padding: 15px;
+  border: none;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
 }
-.play-again { background: #e8efff; color: #3d7af5; }
-.new-game { background: #3d7af5; color: white; }
-.hidden { display: none !important; }
+.play-again {
+  background: #e8efff;
+  color: #3d7af5;
+}
+.new-game {
+  background: #3d7af5;
+  color: white;
+}
+.hidden {
+  display: none !important;
+}
 
 /* Highlights every instance of the selected number on the board */
 .highlight-same {
-    background-color: #d1e9ff !important; /* Soft blue highlight */
-    transition: background-color 0.1s ease; /* Makes the highlight pop in smoothly */
+  background-color: #d1e9ff !important; /* Soft blue highlight */
+  transition: background-color 0.1s ease; /* Makes the highlight pop in smoothly */
 }
 
 /* Ensure fixed numbers (clues) stay bold even when highlighted */
 .fixed.highlight-same {
-    background-color: #bbdefb !important; /* Slightly darker blue for clues */
+  background-color: #bbdefb !important; /* Slightly darker blue for clues */
 }
 
 .highlight-crosshair {
-    background-color: #f3f3f3 !important;
+  background-color: lightcyan !important;
 }
