@@ -83,6 +83,11 @@ function startGame(level = currentDifficulty) {
   // Save the deep copy of the puzzle
   initialBoard = board.map((row) => [...row]); // Deep copy to preserve the initial state of the board for restarting the game
   renderBoard(initialBoard); // Render the initial board with clues based on the generated puzzle
+
+  selectedNumber=null;
+  document.querySelectorAll(".number-btn").forEach(b => b.classList.remove("selected-number"));
+  document.getElementById("clear").classList.remove("selected-number");
+  highlightAll("");
 }
 // Renders the Sudoku board by populating the input cells with the values from the provided board array. It also applies the "fixed" class to cells that contain clues and resets any previous input or error states.
 function renderBoard(board) {
@@ -90,7 +95,7 @@ function renderBoard(board) {
   inputs.forEach((input) => {
     // Clear all input cells and remove any previous classes (fixed, small-text, error)
     input.value = "";
-    input.classList.remove("fixed", "small-text", "error");
+    input.classList.remove("fixed", "small-text", "error","highlight-same","highlight-crosshair");
   });
   // Populate the cells with the values from the board array and apply the "fixed" class to clue cells
   for (let i = 0; i < 81; i++) {
