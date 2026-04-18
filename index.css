@@ -67,7 +67,7 @@ h1 {
   width: 100%;
   height: 100%;
   text-align: center;
-  font-size: clamp(1.2em, 4vmin, 24px); /* Scales number size with board */
+  font-size: 16px;
   border: none;
   cursor: pointer;
   background: white;
@@ -157,7 +157,7 @@ h1 {
 }
 
 .number-btn {
-  flex: 1 1 40px; /* Tries to be 40px, but grows/shrinks to fill width */
+  flex: 0 1 40px; /* Tries to be 40px, but grows/shrinks to fill width */
   max-width: 60px;
   aspect-ratio: 1 / 1; /* Keeps them as squares */
   display: flex;
@@ -211,14 +211,17 @@ h1 {
 
 /* Specific Icon Colors */
 #restart .icon {
-  color: blue;
+  color: purple;
+}
+#mark-small .icon {
+  color: purple;
 }
 #mark-small.active-mark .icon {
-  background-color: blue;
+  background-color: purple;
   color: white;
 }
 #clear .icon {
-  color: red;
+  color: purple;
 }
 #clear.selected-number {
   background-color: transparent !important; /* This kills the blue box */
@@ -228,7 +231,7 @@ h1 {
 }
 
 #clear.selected-number .icon {
-  background-color: red !important; /* This makes the circle red */
+  background-color: purple !important; /* This makes the circle red */
   color: white !important;
   border: 2px solid darkred;
   transform: scale(1.1);
@@ -246,7 +249,7 @@ h1 {
 .small-text {
   /* 1. Force the size and color */
   font-size: 10px !important;
-  color: #666 !important;
+  color: black !important;
   /* 2. Layout: This makes numbers wrap neatly inside the square */
   display: flex !important;
   flex-wrap: wrap;
@@ -269,21 +272,21 @@ h1 {
 
 /* The "Crosshair" - Lights up the row, column, and 3x3 box of the selected cell */
 .highlight-crosshair {
-  background-color: #e0f7fa !important; /* Very light cyan */
+  background-color: #f3e5f5 !important; /* Very light cyan */
   transition: background-color 0.2s ease;
 }
 
 /* Matching Numbers - Lights up every cell containing the same number as the selection */
 .highlight-same {
-  background-color: #d1e9ff !important; /* Soft sky blue */
-  border: 1px solid #a0c4ff; /* Adds a tiny border to make them "pop" */
+  background-color: #e1bee7 !important; /* Soft sky blue */
+  border: 1px solid #ce93d8; /* Adds a tiny border to make them "pop" */
   font-weight: bold;
   transition: background-color 0.1s ease;
 }
 
 /* Special Case: If a number is "fixed" (a clue) AND highlighted, make it slightly darker blue */
 .fixed.highlight-same {
-  background-color: #bbdefb !important;
+  background-color: #d1c4e9 !important;
   font-weight: bold;
 }
 
