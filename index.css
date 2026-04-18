@@ -169,6 +169,8 @@ h1 {
   border-radius: 8px;
   cursor: pointer;
   color: black !important;
+  -webkit-text-fill-color: black !important; /* This forces iOS to stop the blue */
+  text-decoration: none !important;
 }
 
 /* 8. Modern Icon Action Buttons (Undo, Restart, etc.) */
