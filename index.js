@@ -161,6 +161,7 @@ function handleCellInputs(cell) {
       cell.value = (cell.value + selectedNumber).split("").sort().join(""); // Add the selected number to the cell's value and sort the characters to keep candidate numbers organized within the cell for easier readability when multiple candidates are marked
     }
   } else {
+    cell.classList.remove("small-text"); // Ensure that the cell is not marked as small text when placing a number, as placing a number should override any candidate markings to reflect the player's intention to commit to that number in the cell
     const numToPlace = parseInt(selectedNumber);
 
     if (numToPlace === solvedBoard[row][col]) {

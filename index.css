@@ -177,6 +177,24 @@ h1 {
   background-color: #bbb !important; /* Highlights current number */
   border: 2px solid black;
 }
+/* This turns the cell into a "mini-grid" for tiny notes */
+.small-text {
+  /* 1. Force the size and color */
+  font-size: 10px !important;
+  color: #666 !important;
+  /* 2. Layout: This makes numbers wrap neatly inside the square */
+  display: flex !important;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  justify-content: flex-start;
+  /* 3. Spacing: Keeps the tiny numbers from touching the edges */
+  padding: 3px !important;
+  line-height: 1.1 !important;
+  word-break: break-all;
+  letter-spacing: 1px;
+  /* 4. Background: A very light tint to show it's a "note" cell */
+  background-color: #fafafa !important;
+}
 
 .error {
   background-color: #ffcccc !important;
