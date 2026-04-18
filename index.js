@@ -167,6 +167,25 @@ function handleCellInputs(cell) {
   const col = index % 9;
 
   if (isMarkSmallMode) {
+    const numToPlace = parseInt(selectedNumber);
+    const currentSolidBoard = Array.from({ length: 9 }, () => Array(9).fill(0));
+
+    allInputs.forEach((input, i) => {
+      const r = Math.floor(i / 9);
+      const c = i % 9;
+      // Note: Here we EXCLUDE small-text to only check against fixed numbers
+      if (
+        input.classList.contains("fixed") &&
+        !input.classList.contains("small-text")
+      ) {
+        currentSolidBoard[r][c] = parseInt(input.value);
+      }
+    });
+    if (!isValid(currentSolidBoard, row, col, numToPlace)) {
+      cell.classList.add("error");
+      setTimeout(() => cell.classList.remove("error"), 250);
+      return;
+    }
     recordMove(); // Record before marking
     cell.classList.add("small-text"); // Mark the cell as small text to indicate it's a candidate number
     if (cell.value.includes(selectedNumber)) {
@@ -396,10 +415,7 @@ function highlightAll(targetNumber, clickedCell) {
     // Loop through all cells again
     allInputs.forEach((input) => {
       // If the cell's number matches our selected number AND isn't just a tiny note
-      if (
-        input.value === targetNumber &&
-        !input.classList.contains("small-text")
-      ) {
+      if (input.value === targetNumber) {
         // Add the blue highlight color
         input.classList.add("highlight-same");
       }

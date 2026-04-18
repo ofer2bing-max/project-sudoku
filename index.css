@@ -276,6 +276,7 @@ h1 {
 .highlight-same {
   background-color: #d1e9ff !important; /* Soft sky blue */
   border: 1px solid #a0c4ff; /* Adds a tiny border to make them "pop" */
+  font-weight: bold;
   transition: background-color 0.1s ease;
 }
 
