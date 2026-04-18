@@ -71,6 +71,7 @@ h1 {
   border: none;
   cursor: pointer;
   background: white;
+  touch-action: manipulation; /* Improves touch responsiveness on mobile */
 }
 #Game-over-screen {
   position: fixed;
