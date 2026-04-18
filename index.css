@@ -72,7 +72,58 @@ h1 {
   cursor: pointer;
   background: white;
 }
-
+#Game-over-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.85); /* Darker background */
+  backdrop-filter: blur(8px); /* Modern blur effect */
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
+}
+#Game-over-screen h2 {
+  font-size: 3rem;
+  margin-bottom: 10px;
+  color: #d8000c;
+}
+#Game-over-screen p {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+}
+.game-over-buttons {
+  display: flex;
+  gap: 15px;
+}
+.game-over-buttons button {
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  background-color: #3d7af5;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+#restart-btn {
+  background-color: #3d7af5;
+  color: white;
+}
+#new-game-btn {
+  background-color: white;
+  color: #3d7af5;
+}
+.game-over-buttons button:hover {
+  transform: scale(1.1);
+  filter: brightness(1.1);
+}
 /* 6. Grid Board Thick Lines */
 #sudoku-game input:nth-child(3n) {
   border-right: 3px solid black; /* Creates vertical 3x3 box borders */
@@ -178,7 +229,7 @@ h1 {
 #clear.selected-number .icon {
   background-color: red !important; /* This makes the circle red */
   color: white !important;
-  border: 2px solid darkred; 
+  border: 2px solid darkred;
   transform: scale(1.1);
 }
 #undo .icon {
