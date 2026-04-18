@@ -168,6 +168,7 @@ h1 {
   border: 1px solid #ccc;
   border-radius: 8px;
   cursor: pointer;
+  color: black !important;
 }
 
 /* 8. Modern Icon Action Buttons (Undo, Restart, etc.) */
