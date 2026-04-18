@@ -49,10 +49,18 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   // Clear selection button event listener
   document.getElementById("clear").addEventListener("click", () => {
-    // Clear the selected number and update button states
-    numButtons.forEach((b) => b.classList.remove("selected-number")); // Deselect all number buttons
-    selectedNumber = ""; // Set selectedNumber to empty string to indicate clearing input
-    document.getElementById("clear").classList.add("selected-number"); // Highlight the clear button to indicate it's active
+    const clearBtn = document.getElementById("clear");
+
+    if (selectedNumber === "") {
+      selectedNumber = null; // If already in clear mode, deselect it
+      clearBtn.classList.remove("selected-number");
+    } else {
+      // Clear the selected number and update button states
+      numButtons.forEach((b) => b.classList.remove("selected-number")); // Deselect all number buttons
+      selectedNumber = ""; // Set selectedNumber to empty string to indicate clearing input
+      clearBtn.classList.add("selected-number"); // Highlight the clear button to indicate it's active
+    }
+    highlightAll(""); // Clear highlights when clearing selection
   });
   document.getElementById("undo").addEventListener("click", () => {
     undo();

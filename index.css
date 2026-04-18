@@ -162,18 +162,31 @@ h1 {
   color: blue;
 }
 #mark-small.active-mark .icon {
-  background-color: #3d7af5;
+  background-color: blue;
   color: white;
 }
 #clear .icon {
   color: red;
+}
+#clear.selected-number {
+  background-color: transparent !important; /* This kills the blue box */
+  border: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+#clear.selected-number .icon {
+  background-color: red !important; /* This makes the circle red */
+  color: white !important;
+  border: 2px solid darkred; /* Fix the 'soilid' typo here if you haven't! */
+  transform: scale(1.1);
 }
 #undo .icon {
   color: #8a2be2;
 }
 
 /* 9. Game Feedback (Errors and Selection) */
-.selected-number {
+.selected-number:not(#clear) {
   background-color: #bbb !important; /* Highlights current number */
   border: 2px solid black;
 }
