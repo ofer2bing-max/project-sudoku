@@ -15,6 +15,7 @@ let initialBoard = []; // Persistent storage for the level's starting clues
 let moveHistory = []; // Stack to keep track of moves for undo functionality, storing the cell reference, previous value, and previous classes to allow accurate restoration of the cell's state when undoing a move
 let solvedBoard = []; // Store the fully solved board for potential future features like hints or solution reveal
 let score = 0; // Placeholder for score tracking, can be implemented based on time taken, number of moves, or other criteria in the future
+let scoreMulty = 1; // Placeholder for score multiplier, can be used to increase score based on difficulty level or other factors in the future
 
 // --- 1. Initialization ---
 document.addEventListener("DOMContentLoaded", () => {
@@ -80,6 +81,12 @@ function startGame(level = currentDifficulty) {
   let board = Array.from({ length: 9 }, () => Array(9).fill(0)); // Create an empty 9x9 board
   lives = 3;
   score = 0;
+
+  if (level === "easy") scoreMulty = 1;
+  else if (level === "medium") scoreMulty = 1.5;
+  else if (level === "hard") scoreMulty = 2;
+  else if (level === "expert") scoreMulty = 3;
+
   updateLivesDisplay();
   updateScoreDisplay();
 
@@ -177,7 +184,7 @@ function handleCellInputs(cell) {
       cell.classList.remove("small-text", "error");
       cell.value = selectedNumber;
       cell.classList.add("fixed"); // Mark the cell as fixed to prevent further changes
-      score += 100; // Increment score for placing a correct number, can be used for future features like score tracking or leaderboards
+      score += Math.floor(100 * scoreMulty); // Increment score for placing a correct number, can be used for future features like score tracking or leaderboards
       updateScoreDisplay(); // Update the score display to reflect the new score after placing a correct number, providing feedback to the player on their progress and performance in the game
       highlightAll(selectedNumber, cell); // Highlight all cells with the same number as the one just placed to provide visual feedback on the current selection and potential duplicates, enhancing the user experience when placing numbers in the Sudoku puzzle
     } else {

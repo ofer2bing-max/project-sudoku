@@ -178,7 +178,7 @@ h1 {
 #clear.selected-number .icon {
   background-color: red !important; /* This makes the circle red */
   color: white !important;
-  border: 2px solid darkred; /* Fix the 'soilid' typo here if you haven't! */
+  border: 2px solid darkred; 
   transform: scale(1.1);
 }
 #undo .icon {
