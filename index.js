@@ -188,7 +188,8 @@ function handleCellInputs(cell) {
       updateScoreDisplay(); // Update the score display to reflect the new score after placing a correct number, providing feedback to the player on their progress and performance in the game
       highlightAll(selectedNumber, cell); // Highlight all cells with the same number as the one just placed to provide visual feedback on the current selection and potential duplicates, enhancing the user experience when placing numbers in the Sudoku puzzle
     } else {
-      score = Math.max(0, score - 50); // score penalty cannot reduce below 0
+      const penalty = 50 * scoreMulty; // Calculate score penalty based on the current score multiplier, which can be adjusted based on difficulty level or other factors to provide a more dynamic scoring system that rewards players for playing at higher difficulties or with certain playstyles
+      score = Math.max(0, score - penalty); // score penalty cannot reduce below 0
       updateScoreDisplay(); // Update the score display to reflect the new score after placing an incorrect number, providing feedback to the player on their performance and encouraging careful consideration when making moves in the game
       lives--;
       updateLivesDisplay();
