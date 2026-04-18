@@ -412,10 +412,11 @@ function highlightAll(targetNumber, clickedCell) {
 
   // 4. Logic for "Matching Numbers" (Finding all 5s, all 2s, etc.)
   if (targetNumber && targetNumber !== "") {
+    const searchNum = targetNumber.toString(); // Ensure the target number is treated as a string for comparison, allowing the function to correctly identify and highlight cells that contain the same number as the selected number, regardless of whether the input is a number or a string representation of a number
     // Loop through all cells again
     allInputs.forEach((input) => {
       // If the cell's number matches our selected number AND isn't just a tiny note
-      if (input.value === targetNumber) {
+      if (input.value.toString().includes(searchNum)) {
         // Add the blue highlight color
         input.classList.add("highlight-same");
       }
