@@ -51,7 +51,7 @@
           <div class="icon">⌫</div>
             <span>Clear</span>
       </div>
-      
+
         <div class="action-item" id="undo">
           <div class="icon">↶</div>
             <span>Undo</span>
@@ -59,16 +59,11 @@
       </div>
 
     <div id="Game-over-screen" class="hidden">
-      <div id="content-modal">
-        <h2 id="end-message">Game Over</h2>
-        <p class="sub-message">
-          You lost the game because you made 3 mistakes.
-        </p>
-
-        <div class="menu-options">
-          <button class="play-again" onclick="resetGame()">Play Again</button>
-          <button class="new-game" onclick="startGame()">New Game</button>
-        </div>
+             <h2>Game Over</h2>
+          <p>You ran out of lives!</p>
+      <div class="game-over-buttons">
+        <button id="restart-btn" onclick="resetGame()">Play Again</button>
+        <button id="new-game-btn" onclick="startGame()">New Game</button>
       </div>
     </div>
 

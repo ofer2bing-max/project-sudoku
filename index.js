@@ -305,7 +305,10 @@ function updateScoreDisplay() {
 // This function displays the game over screen by removing the "hidden" class from the Game-over-screen element, allowing players to see the game over message and options when they run out of lives.
 function GameOverScreen() {
   const screen = document.getElementById("Game-over-screen");
-  if (screen) screen.classList.remove("hidden");
+  if (screen) {
+    screen.classList.remove("hidden");
+    screen.style.display = "flex"; // Ensure the game over screen is displayed as a flex container for proper layout of its contents, providing a visually appealing and organized presentation of the game over message and options for the player when they lose the game
+  }
 }
 
 function resetGame() {
@@ -315,7 +318,10 @@ function resetGame() {
   updateScoreDisplay();
 
   const GameOverScreen = document.getElementById("Game-over-screen");
-  if (GameOverScreen) GameOverScreen.classList.add("hidden");
+  if (GameOverScreen) {
+    GameOverScreen.classList.add("hidden");
+    GameOverScreen.style.display = "none"; // Hide the game over screen when resetting the game to allow players to start a new game without the game over message obstructing the view, providing a seamless transition back to the game interface for a fresh start
+  }
 
   renderBoard(initialBoard);
   selectedNumber = null;
