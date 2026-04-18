@@ -84,8 +84,10 @@ function startGame(level = currentDifficulty) {
   initialBoard = board.map((row) => [...row]); // Deep copy to preserve the initial state of the board for restarting the game
   renderBoard(initialBoard); // Render the initial board with clues based on the generated puzzle
 
-  selectedNumber=null;
-  document.querySelectorAll(".number-btn").forEach(b => b.classList.remove("selected-number"));
+  selectedNumber = null;
+  document
+    .querySelectorAll(".number-btn")
+    .forEach((b) => b.classList.remove("selected-number"));
   document.getElementById("clear").classList.remove("selected-number");
   highlightAll("");
 }
@@ -95,7 +97,13 @@ function renderBoard(board) {
   inputs.forEach((input) => {
     // Clear all input cells and remove any previous classes (fixed, small-text, error)
     input.value = "";
-    input.classList.remove("fixed", "small-text", "error","highlight-same","highlight-crosshair");
+    input.classList.remove(
+      "fixed",
+      "small-text",
+      "error",
+      "highlight-same",
+      "highlight-crosshair",
+    );
   });
   // Populate the cells with the values from the board array and apply the "fixed" class to clue cells
   for (let i = 0; i < 81; i++) {
@@ -284,12 +292,20 @@ function GameOverScreen() {
 }
 
 function resetGame() {
+  score = 0;
   lives = 3;
   updateLivesDisplay();
+  updateScoreDisplay();
+
   const GameOverScreen = document.getElementById("Game-over-screen");
   if (GameOverScreen) GameOverScreen.classList.add("hidden");
+
   renderBoard(initialBoard);
-  highlightAll(""); // Clear highlights when restarting the game
+  selectedNumber = null;
+  document.querySelectorAll(".number-btn").forEach((btn) => {
+    btn.classList.remove("selected-number"); // 2. Removes the blue highlight from the button
+  });
+  highlightAll(""); // Clears any highlights off the board cells
 }
 // This function implements the undo functionality by popping the last move from the move history stack and restoring the cell's value and classes to their previous state, allowing players to revert their last action and correct mistakes without affecting the overall game state or losing progress.
 function undo() {
@@ -308,53 +324,62 @@ function undo() {
 }
 // This function highlights all cells that contain the same number as the currently selected number by adding a specific CSS class to those cells. It first removes the highlight from all cells to ensure that only the relevant cells are highlighted based on the current selection.
 function highlightAll(targetNumber, clickedCell) {
-  const allInputs = Array.from(document.querySelectorAll("#sudoku-game input")); // Select all input cells in the Sudoku board to check their values against the target number for highlighting purposes
-  const clickedIndex = allInputs.indexOf(clickedCell); // Get the index of the clicked cell to determine its row and column for crosshair highlighting; if no cell was clicked , clickedIndex will be -1, and we will skip the crosshair highlighting logic
+  // 1. Select all 81 input cells and convert the list into a true Array
+  const allInputs = Array.from(document.querySelectorAll("#sudoku-game input"));
 
-  // If user clicks outside or on nothing, just clear highlights
-  // This check ensures that if the user clicks outside of any cell or on an element that is not part of the Sudoku grid, all highlights will be cleared to prevent any unintended highlighting and maintain a clean user interface when no specific cell is selected
-  if (clickedIndex === -1) {
-    allInputs.forEach((input) =>
-      input.classList.remove("highlight-same", "highlight-crosshair"),
-    );
-    return;
+  // 2. Clear out any old highlights before we draw the new ones
+  allInputs.forEach((input) =>
+    input.classList.remove("highlight-same", "highlight-crosshair"),
+  );
+
+  // 3. Logic for the "Crosshair" (Row, Column, and Box)
+  if (clickedCell) {
+    // Find the index (0-80) of the specific cell that was just clicked
+    const clickedIndex = allInputs.indexOf(clickedCell);
+
+    // If the click actually happened on a valid board cell
+    if (clickedIndex !== -1) {
+      const targetRow = Math.floor(clickedIndex / 9); // Math to find the row number (0-8)
+      const targetCol = clickedIndex % 9; // Math to find the column number (0-8)
+
+      // Calculate the start positions of the 3x3 box (e.g., Row 0, 3, or 6)
+      const boxRowStart = Math.floor(targetRow / 3) * 3;
+      const boxColStart = Math.floor(targetCol / 3) * 3;
+
+      // Loop through EVERY cell on the board to see if it should be highlighted
+      allInputs.forEach((input, index) => {
+        const currentRow = Math.floor(index / 9); // Row of the current cell in the loop
+        const currentCol = index % 9; // Column of the current cell in the loop
+
+        // Check if this cell is in the same row, column, or 3x3 box as the clicked one
+        const isInRow = currentRow === targetRow;
+        const isInCol = currentCol === targetCol;
+        const isInBox =
+          currentRow >= boxRowStart &&
+          currentRow < boxRowStart + 3 &&
+          currentCol >= boxColStart &&
+          currentCol < boxColStart + 3;
+
+        // If it meets any of those three conditions, turn on the crosshair color
+        if (isInRow || isInCol || isInBox) {
+          input.classList.add("highlight-crosshair");
+        }
+      });
+    }
   }
 
-  const targetRow = Math.floor(clickedIndex / 9);
-  const targetCol = clickedIndex % 9;
-
-  const boxRowStart = Math.floor(targetRow / 3) * 3;
-  const boxColStart = Math.floor(targetCol / 3) * 3;
-
-  allInputs.forEach((input, index) => {
-    input.classList.remove("highlight-same", "highlight-crosshair");
-
-    const currentRow = Math.floor(index / 9);
-    const currentCol = index % 9;
-
-    // Highlight Row, Column ---
-    // Check if the current cell is in the same row, column, or 3x3 box as the clicked cell to apply the crosshair highlight for better visual guidance on the related cells in the Sudoku grid when a cell is selected
-    const isInRow = currentRow === targetRow;
-    const isInCol = currentCol === targetCol;
-    const isInBox =
-      currentRow >= boxRowStart &&
-      currentRow < boxRowStart + 3 &&
-      currentCol >= boxColStart &&
-      currentCol < boxColStart + 3;
-    // If the current cell is in the same row, column, or box as the clicked cell, add the "highlight-crosshair" class to visually indicate the related cells in the Sudoku grid for better user experience when navigating and selecting cells
-    if (isInRow || isInCol || isInBox) {
-      input.classList.add("highlight-crosshair");
-    }
-
-    // Highlight Matching Numbers
-    // Check if the current cell's value matches the target number and is not marked as small text to apply the highlight for cells that contain the same number as the selected number, providing visual feedback to help players quickly identify all instances of that number on the board; this also ensures that only valid numbers are highlighted, excluding candidate markings (small text) for better clarity when selecting a number
-    if (
-      targetNumber &&
-      targetNumber !== "" &&
-      input.value === targetNumber &&
-      !input.classList.contains("small-text")
-    ) {
-      input.classList.add("highlight-same");
-    }
-  });
+  // 4. Logic for "Matching Numbers" (Finding all 5s, all 2s, etc.)
+  if (targetNumber && targetNumber !== "") {
+    // Loop through all cells again
+    allInputs.forEach((input) => {
+      // If the cell's number matches our selected number AND isn't just a tiny note
+      if (
+        input.value === targetNumber &&
+        !input.classList.contains("small-text")
+      ) {
+        // Add the blue highlight color
+        input.classList.add("highlight-same");
+      }
+    });
+  }
 }
