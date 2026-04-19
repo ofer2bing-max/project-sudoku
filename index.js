@@ -72,6 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   startGame();
+  updateNumberButtons(); // Initial update to set the correct state of number buttons based on the initial board clues, hiding any numbers that are already fully placed in the clues to prevent players from selecting numbers that are already completed in the puzzle right from the start of the game
 });
 
 // --- 2. Game Core ---
@@ -98,6 +99,7 @@ function startGame(level = currentDifficulty) {
   // Save the deep copy of the puzzle
   initialBoard = board.map((row) => [...row]); // Deep copy to preserve the initial state of the board for restarting the game
   renderBoard(initialBoard); // Render the initial board with clues based on the generated puzzle
+  updateNumberButtons(); // Update the number buttons to reflect the initial state of the board, hiding any numbers that are already fully placed in the clues to prevent players from selecting numbers that are already completed in the puzzle
 
   selectedNumber = null;
   document
@@ -207,6 +209,7 @@ function handleCellInputs(cell) {
       score += Math.floor(100 * scoreMulty); // Increment score for placing a correct number, can be used for future features like score tracking or leaderboards
       updateScoreDisplay(); // Update the score display to reflect the new score after placing a correct number, providing feedback to the player on their progress and performance in the game
       highlightAll(selectedNumber, cell); // Highlight all cells with the same number as the one just placed to provide visual feedback on the current selection and potential duplicates, enhancing the user experience when placing numbers in the Sudoku puzzle
+      updateNumberButtons(); // Update the number buttons to reflect the new state of the board, hiding any numbers that are now fully placed in the clues to prevent players from selecting numbers that are already completed in the puzzle
     } else {
       const penalty = 50 * scoreMulty; // Calculate score penalty based on the current score multiplier, which can be adjusted based on difficulty level or other factors to provide a more dynamic scoring system that rewards players for playing at higher difficulties or with certain playstyles
       score = Math.max(0, score - penalty); // score penalty cannot reduce below 0
@@ -364,6 +367,7 @@ function undo() {
   // Restore classes
   cell.className = ""; // Clear current classes
   lastMove.prevClass.forEach((cls) => cell.classList.add(cls));
+  updateNumberButtons(); // Update the number buttons to reflect the new state of the board after undoing a move, ensuring that any numbers that are now fully placed in the clues are hidden again to prevent players from selecting numbers that are already completed in the puzzle, maintaining consistency between the board state and the available number options for the player
 }
 // This function highlights all cells that contain the same number as the currently selected number by adding a specific CSS class to those cells. It first removes the highlight from all cells to ensure that only the relevant cells are highlighted based on the current selection.
 function highlightAll(targetNumber, clickedCell) {
@@ -423,4 +427,38 @@ function highlightAll(targetNumber, clickedCell) {
       }
     });
   }
+}
+function updateNumberButtons() {
+  const allInputs = Array.from(document.querySelectorAll("#sudoku-game input"));
+  const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 };
+  allInputs.forEach((input) => {
+    const val = input.value;
+    if (val && !input.classList.contains("small-text")) {
+      if (val.length === 1) {
+        counts[val]++;
+      }
+    }
+  });
+  const numButtons = document.querySelectorAll(".number-btn");
+  numButtons.forEach((btn) => {
+    const num = btn.getAttribute("data-number");
+    const remaining = 9 - counts[num];
+    const badge = btn.querySelector(".count-badge");
+
+    if (badge) {
+      badge.innerText = remaining;
+    }
+
+    if (remaining <= 0) {
+      btn.classList.add("hidden-number");
+
+      if (selectedNumber === num) {
+        selectedNumber = null;
+        btn.classList.remove("selected-number");
+        highlightAll("");
+      }
+    } else {
+      btn.classList.remove("hidden-number");
+    }
+  });
 }

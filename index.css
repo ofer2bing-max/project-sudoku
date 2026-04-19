@@ -157,6 +157,7 @@ h1 {
 }
 
 .number-btn {
+  position: relative;
   flex: 0 1 40px; /* Tries to be 40px, but grows/shrinks to fill width */
   max-width: 60px;
   aspect-ratio: 1 / 1; /* Keeps them as squares */
@@ -173,6 +174,18 @@ h1 {
   text-decoration: none !important;
 }
 
+.count-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 0.75rem;
+  color: #888;
+  font-weight: normal;
+}
+
+.selected-number .count-badge {
+  color: white;
+}
 /* 8. Modern Icon Action Buttons (Undo, Restart, etc.) */
 .button-actions {
   display: flex;
@@ -317,4 +330,10 @@ h1 {
 /* 10. Hidden Utility Class */
 .hidden {
   display: none !important; /* Forces elements to disappear */
+}
+.hidden-number {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
 }
