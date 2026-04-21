@@ -171,6 +171,7 @@ function handleCellInputs(cell) {
   // 2. RUN HIGHLIGHTS
   // We run this BEFORE the guard so that finished numbers still glow!
   highlightAll(selectedNumber, cell);
+  checkwin(); // Check win condition after highlighting to ensure that the game state is updated correctly and any potential win condition is evaluated based on the current state of the board, allowing for scenarios where a player might win the game by placing a number that completes the puzzle, even if they haven't made a move that directly triggers a win condition check, as long as the board is in a winning state after the highlights are applied
 
   // 3. THE GUARD: "Look but don't touch"
   const currentBtn = document.querySelector(
@@ -279,7 +280,7 @@ function handleCellInputs(cell) {
             cell.classList.remove("error");
           }
         }
-        checkWIn();
+        checkwin(); // Check win condition after handling the wrong move to ensure that the game state is updated correctly and any potential win condition is evaluated even after a wrong move, allowing for scenarios where a player might still win the game despite making a mistake, as long as they correct it within their remaining lives
       }, 1000);
     }
   }
@@ -401,6 +402,11 @@ function resetGame() {
   updateLivesDisplay();
   updateScoreDisplay();
 
+  const numButtons = document.querySelectorAll(".number-btn");
+  numButtons.forEach((btn) => {
+    btn.classList.remove("selected-number", "hidden-number"); // Reset the state of all number buttons by removing both the "selected-number" and "hidden-number" classes to ensure that all buttons are available and none are highlighted or hidden when starting a new game, providing a consistent and fair starting point for the player in the new game session
+  });
+
   const GameOverScreen = document.getElementById("Game-over-screen");
   if (GameOverScreen) {
     GameOverScreen.classList.add("hidden");
@@ -437,6 +443,7 @@ function undo() {
   // Restore classes
   cell.className = ""; // Clear current classes
   lastMove.prevClass.forEach((cls) => cell.classList.add(cls));
+  highlightAll(selectedNumber); // Update highlights after undoing the move to ensure that the visual feedback on the board is consistent with the current state of the game, allowing players to see the correct highlights based on their current selection and the restored state of the board after undoing a move
   updateNumberButtons(); // Update the number buttons to reflect the new state of the board after undoing a move, ensuring that any numbers that are now fully placed in the clues are hidden again to prevent players from selecting numbers that are already completed in the puzzle, maintaining consistency between the board state and the available number options for the player
 }
 // This function highlights all cells that contain the same number as the currently selected number by adding a specific CSS class to those cells. It first removes the highlight from all cells to ensure that only the relevant cells are highlighted based on the current selection.
@@ -576,6 +583,7 @@ function showWinScreen() {
 
   if (screen) {
     screen.classList.remove("hidden");
+    screen.style.display = "flex"; // Ensure the win screen is displayed as a flex container for proper layout of its contents, providing a visually appealing and organized presentation of the win message and options for the player when they successfully complete the game
   }
 }
 
