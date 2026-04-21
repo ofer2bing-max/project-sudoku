@@ -89,6 +89,110 @@ h1 {
   color: white;
   text-align: center;
 }
+#win-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7); /* Semi-transparent dark background */
+  backdrop-filter: blur(10px); /* Adds a modern blur effect */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  opacity: 1;
+  transition: opacity 0.4s ease; /* Smooth fade-out when hiding */
+}
+
+/* 1. Lighten the background card */
+.winner-content {
+  background: rgba(
+    255,
+    255,
+    255,
+    0.95
+  ); /* Nearly solid white for readability */
+  padding: 40px;
+  border-radius: 24px;
+  text-align: center;
+  width: 90%;
+  max-width: 450px; /* Slightly wider to fit buttons side-by-side */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  border: 2px solid #ffd700;
+}
+
+/* 2. Make the "Victory" text more vibrant */
+.winner-content h2 {
+  font-size: 3rem;
+  margin-bottom: 5px;
+  background: linear-gradient(to bottom, #ffeb3b, #fbc02d);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* 3. Lighten the sub-text */
+.winner-content p {
+  color: #777; /* Soft gray instead of dark gray */
+  font-size: 1.1rem;
+  margin-top: 0;
+}
+
+/* 4. Horizontal Buttons */
+/* This is the box around the buttons */
+.winner-actions-container {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #eee; /* A subtle line to separate stats from buttons */
+  width: 100%;
+}
+
+.winner-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  justify-content: center;
+}
+
+.win-btn {
+  flex: 1;
+  padding: 14px;
+  border-radius: 12px; /* Slightly less round for a cleaner look */
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  font-size: 0.95rem;
+  transition:
+    transform 0.1s,
+    filter 0.2s;
+}
+
+/* Let's give the buttons a tiny shadow so they don't look flat */
+.win-btn.primary {
+  background: #3d7af5;
+  color: white;
+  box-shadow: 0 4px 0 #2a52be; /* 3D bottom edge */
+}
+
+.win-btn.secondary {
+  background: #f0f0f0;
+  color: #3d7af5;
+  box-shadow: 0 4px 0 #ccc; /* 3D bottom edge */
+}
+
+.win-btn:active {
+  transform: translateY(2px); /* Pushes the button "down" when clicked */
+  box-shadow: 0 2px 0 #2a52be;
+}
+/* 5. Stat Colors */
+.final-stat {
+  color: #444; /* Darker for contrast since background is lighter */
+  font-weight: 600;
+  margin-bottom: 5px;
+}
 #Game-over-screen h2 {
   font-size: 3rem;
   margin-bottom: 10px;
@@ -173,6 +277,51 @@ h1 {
   -webkit-text-fill-color: black !important; /* This forces iOS to stop the blue */
   text-decoration: none !important;
 }
+#status {
+  display: flex;
+  justify-content: center; /* Centers the boxes */
+  gap: 15px; /* Controls the distance between the boxes */
+  margin-bottom: 20px;
+  width: 90vmin;
+  max-width: 500px;
+}
+
+.stat-box {
+  flex: 1; /* Makes all three boxes the exact same width */
+  background: #f8f9fa;
+  padding: 8px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column; /* Put label on top of the number */
+  align-items: center;
+  border: 1px solid #eee;
+}
+
+.stat-box .label {
+  font-size: 0.65rem;
+  font-weight: bold;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.stat-box .value {
+  font-size: 1.2rem;
+  font-weight: bold;
+  font-family: "Courier New", Courier, monospace; /* Keeps numbers steady */
+  color: #333;
+}
+
+/* Specific colors to match your theme */
+#time-count {
+  color: #3d7af5;
+} /* Blue */
+#lives-count {
+  color: black;
+} /*black*/
+#score-count {
+  color: purple;
+} /* Purple */
 
 .count-badge {
   position: absolute;
@@ -325,6 +474,59 @@ h1 {
   75% {
     transform: translateX(-4px);
   }
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+/* The animation definition */
+@keyframes number-complete-glow {
+  0% {
+    transform: scale(1);
+    background-color: #e8f0fe;
+  }
+  50% {
+    transform: scale(1.15);
+    /* A "supercharged" version of your highlight color */
+    background-color: #ce93d8;
+    color: white !important; /* Make the number white briefly */
+    box-shadow: 0 0 20px rgba(61, 122, 245, 0.6);
+    z-index: 10;
+  }
+  100% {
+    transform: scale(1);
+    /* Back to a "faded" highlight color to show it's done */
+    background-color: #e8f0fe;
+  }
+}
+
+.number-pop {
+  animation: number-complete-glow 0.6s ease-out;
+  border-radius: 4px; /* Makes the pop look a bit softer */
+  position: relative;
+}
+/* Optional: Dim the number button at the bottom when finished */
+.number-btn.hidden-number {
+  opacity: 0.2;
+  pointer-events: none; /* Stops it from being clickable */
+  transition: opacity 0.5s ease;
 }
 
 /* 10. Hidden Utility Class */

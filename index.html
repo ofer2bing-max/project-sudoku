@@ -16,10 +16,22 @@
       <button onclick="startGame('expert')">Expert</button>
     </div>
 
-    <div id="status">
-      Lives: <span id="lives-count">3</span>/3 Score:
-      <span id="score-count">0</span>
-    </div>
+   <div id="status">
+     <div class="stat-box">
+       <span class="label">LIVES</span>
+       <span class="value"><span id="lives-count">3</span>/3</span>
+     </div>
+  
+     <div class="stat-box">
+      <span class="label">SCORE</span>
+        <span id="score-count" class="value">0</span>
+     </div>
+
+     <div class="stat-box">
+       <span class="label">TIME</span>
+       <span id="time-count" class="value">0:00</span>
+      </div>
+   </div>
 
     <div id="sudoku-game"></div>
 
@@ -73,6 +85,29 @@
       <div class="game-over-buttons">
         <button id="restart-btn" onclick="resetGame()">Play Again</button>
         <button id="new-game-btn" onclick="startGame()">New Game</button>
+      </div>
+    </div>
+
+    <div id="win-screen" class="hidden">
+      <div class="winner-content">
+        <h2>Victory!</h2>
+        <p>good job yuval goon!</p>
+    
+      <div class="final-stats-container">
+        <div class="final-stat">
+         <span class="stat-label">TIME</span>
+          <span id="final-time">00:00</span>
+       </div>
+        <div class="final-stat">
+         <span class="stat-label">SCORE</span>
+         <span id="final-score">0</span>
+       </div>
+    </div>
+
+    <div class="winner-actions-container">
+       <div class="winner-buttons">
+        <button class="win-btn primary" onclick="resetGame()">Play Again</button>
+        <button class="win-btn secondary" onclick="startGame()">New Game</button>
       </div>
     </div>
 

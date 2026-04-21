@@ -16,6 +16,8 @@ let moveHistory = []; // Stack to keep track of moves for undo functionality, st
 let solvedBoard = []; // Store the fully solved board for potential future features like hints or solution reveal
 let score = 0; // Placeholder for score tracking, can be implemented based on time taken, number of moves, or other criteria in the future
 let scoreMulty = 1; // Placeholder for score multiplier, can be used to increase score based on difficulty level or other factors in the future
+let timeSeconds = 0; // Placeholder for time tracking, can be implemented to track the time taken by the player to solve the puzzle and potentially use it for scoring or providing feedback on performance in the future
+let timerInterval = null; // Placeholder for timer interval, can be used to manage the timing mechanism for tracking how long the player has been playing the current puzzle, allowing for features like time-based scoring or performance feedback in the future
 
 // --- 1. Initialization ---
 document.addEventListener("DOMContentLoaded", () => {
@@ -69,6 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Restart button resets the game state and re-renders the initial board clues
   document.getElementById("restart").addEventListener("click", () => {
     resetGame();
+    startTimer(); // Restart the timer when the game is reset to ensure that time tracking is accurate and consistent with the new game state, allowing players to start fresh with a new timer for their new game session
   });
 
   startGame();
@@ -79,6 +82,8 @@ document.addEventListener("DOMContentLoaded", () => {
 function startGame(level = currentDifficulty) {
   // Default to currentDifficulty if no level is provided
   document.getElementById("Game-over-screen").classList.add("hidden");
+  document.getElementById("win-screen").classList.add("hidden");
+
   let board = Array.from({ length: 9 }, () => Array(9).fill(0)); // Create an empty 9x9 board
   lives = 3;
   score = 0;
@@ -100,6 +105,7 @@ function startGame(level = currentDifficulty) {
   initialBoard = board.map((row) => [...row]); // Deep copy to preserve the initial state of the board for restarting the game
   renderBoard(initialBoard); // Render the initial board with clues based on the generated puzzle
   updateNumberButtons(); // Update the number buttons to reflect the initial state of the board, hiding any numbers that are already fully placed in the clues to prevent players from selecting numbers that are already completed in the puzzle
+  startTimer(); // Start the game timer to track how long the player takes to solve the puzzle, allowing for potential future features like time-based scoring or performance feedback based on time taken
 
   selectedNumber = null;
   document
@@ -206,10 +212,13 @@ function handleCellInputs(cell) {
       cell.classList.remove("small-text", "error");
       cell.value = selectedNumber;
       cell.classList.add("fixed"); // Mark the cell as fixed to prevent further changes
+      removeSmallNumbers(row, col, numToPlace); // Remove the placed number from the candidate markings of all cells in the same row, column, and 3x3 subgrid to maintain consistency with Sudoku rules and provide a clearer visual representation of remaining candidate numbers for the player after placing a correct number in the puzzle
+
       score += Math.floor(100 * scoreMulty); // Increment score for placing a correct number, can be used for future features like score tracking or leaderboards
       updateScoreDisplay(); // Update the score display to reflect the new score after placing a correct number, providing feedback to the player on their progress and performance in the game
       highlightAll(selectedNumber, cell); // Highlight all cells with the same number as the one just placed to provide visual feedback on the current selection and potential duplicates, enhancing the user experience when placing numbers in the Sudoku puzzle
       updateNumberButtons(); // Update the number buttons to reflect the new state of the board, hiding any numbers that are now fully placed in the clues to prevent players from selecting numbers that are already completed in the puzzle
+      checkwin(); // Check if the player has won the game after placing a correct number, allowing for the win condition to be evaluated and the win screen to be displayed if the puzzle is completed successfully
     } else {
       const penalty = 50 * scoreMulty; // Calculate score penalty based on the current score multiplier, which can be adjusted based on difficulty level or other factors to provide a more dynamic scoring system that rewards players for playing at higher difficulties or with certain playstyles
       score = Math.max(0, score - penalty); // score penalty cannot reduce below 0
@@ -328,6 +337,8 @@ function updateScoreDisplay() {
 // This function displays the game over screen by removing the "hidden" class from the Game-over-screen element, allowing players to see the game over message and options when they run out of lives.
 function GameOverScreen() {
   const screen = document.getElementById("Game-over-screen");
+  clearInterval(timerInterval); // Stop the game timer when the game is over to prevent it from continuing to run after the player has lost, ensuring that the time tracking is accurate and consistent with the game state when the game over screen is displayed
+
   if (screen) {
     screen.classList.remove("hidden");
     screen.style.display = "flex"; // Ensure the game over screen is displayed as a flex container for proper layout of its contents, providing a visually appealing and organized presentation of the game over message and options for the player when they lose the game
@@ -346,7 +357,14 @@ function resetGame() {
     GameOverScreen.style.display = "none"; // Hide the game over screen when resetting the game to allow players to start a new game without the game over message obstructing the view, providing a seamless transition back to the game interface for a fresh start
   }
 
+  const winScreen = document.getElementById("win-screen");
+  if (winScreen) {
+    winScreen.classList.add("hidden");
+    winScreen.style.display = "none"; // Hide the win screen when resetting the game to allow players to start a new game without the win message obstructing the view, providing a seamless transition back to the game interface for a fresh start
+  }
+
   renderBoard(initialBoard);
+  startTimer();
   selectedNumber = null;
   document.querySelectorAll(".number-btn").forEach((btn) => {
     btn.classList.remove("selected-number"); // 2. Removes the blue highlight from the button
@@ -379,43 +397,19 @@ function highlightAll(targetNumber, clickedCell) {
     input.classList.remove("highlight-same", "highlight-crosshair"),
   );
 
-  // 3. Logic for the "Crosshair" (Row, Column, and Box)
+  // 2. Logic for the "Crosshair" (Replaces all that code you just showed me)
   if (clickedCell) {
-    // Find the index (0-80) of the specific cell that was just clicked
     const clickedIndex = allInputs.indexOf(clickedCell);
+    const targetRow = Math.floor(clickedIndex / 9);
+    const targetCol = clickedIndex % 9;
 
-    // If the click actually happened on a valid board cell
-    if (clickedIndex !== -1) {
-      const targetRow = Math.floor(clickedIndex / 9); // Math to find the row number (0-8)
-      const targetCol = clickedIndex % 9; // Math to find the column number (0-8)
-
-      // Calculate the start positions of the 3x3 box (e.g., Row 0, 3, or 6)
-      const boxRowStart = Math.floor(targetRow / 3) * 3;
-      const boxColStart = Math.floor(targetCol / 3) * 3;
-
-      // Loop through EVERY cell on the board to see if it should be highlighted
-      allInputs.forEach((input, index) => {
-        const currentRow = Math.floor(index / 9); // Row of the current cell in the loop
-        const currentCol = index % 9; // Column of the current cell in the loop
-
-        // Check if this cell is in the same row, column, or 3x3 box as the clicked one
-        const isInRow = currentRow === targetRow;
-        const isInCol = currentCol === targetCol;
-        const isInBox =
-          currentRow >= boxRowStart &&
-          currentRow < boxRowStart + 3 &&
-          currentCol >= boxColStart &&
-          currentCol < boxColStart + 3;
-
-        // If it meets any of those three conditions, turn on the crosshair color
-        if (isInRow || isInCol || isInBox) {
-          input.classList.add("highlight-crosshair");
-        }
-      });
-    }
+    // We call the helper and tell it to light up every cell it finds
+    getAffectedCells(targetRow, targetCol).forEach((cell) => {
+      cell.classList.add("highlight-crosshair");
+    });
   }
 
-  // 4. Logic for "Matching Numbers" (Finding all 5s, all 2s, etc.)
+  // 3. Logic for "Matching Numbers" (Finding all 5s, all 2s, etc.)
   if (targetNumber && targetNumber !== "") {
     const searchNum = targetNumber.toString(); // Ensure the target number is treated as a string for comparison, allowing the function to correctly identify and highlight cells that contain the same number as the selected number, regardless of whether the input is a number or a string representation of a number
     // Loop through all cells again
@@ -450,6 +444,9 @@ function updateNumberButtons() {
     }
 
     if (remaining <= 0) {
+      if (!btn.classList.contains("hidden-number")) {
+        triggerNumberPop(num); // Trigger confetti animation when a number is fully placed in the clues, providing a celebratory visual effect to reward the player for completing that number in the puzzle and enhancing the overall gaming experience with positive feedback for their progress
+      }
       btn.classList.add("hidden-number");
 
       if (selectedNumber === num) {
@@ -459,6 +456,91 @@ function updateNumberButtons() {
       }
     } else {
       btn.classList.remove("hidden-number");
+    }
+  });
+}
+
+function getAffectedCells(row, col) {
+  const allInputs = Array.from(document.querySelectorAll("#sudoku-game input"));
+  const startRow = Math.floor(row / 3) * 3;
+  const startCol = Math.floor(col / 3) * 3;
+
+  return allInputs.filter((_, index) => {
+    const r = Math.floor(index / 9);
+    const c = index % 9;
+    return (
+      r === row ||
+      c === col ||
+      (r >= startRow && r < startRow + 3 && c >= startCol && c < startCol + 3)
+    );
+  });
+}
+function removeSmallNumbers(row, col, placedNumber) {
+  const numStr = placedNumber.toString();
+  const affected = getAffectedCells(row, col);
+  affected.forEach((cell) => {
+    if (cell.classList.contains("small-text")) {
+      cell.value = cell.value.replace(numStr, ""); // Remove the placed number from the candidate markings in the affected cells to maintain consistency with Sudoku rules and provide a clearer visual representation of remaining candidate numbers for the player after placing a correct number in the puzzle
+      if (cell.value === "") {
+        cell.classList.remove("small-text"); // If there are no more candidate numbers left in the cell after removing the placed number, remove the "small-text" class to reflect that there are no more candidates for that cell, providing accurate visual feedback to the player on the current state of the cell's candidate markings in the Sudoku puzzle
+      }
+    }
+  });
+}
+function formatTime(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins}:${secs.toString().padStart(2, "0")}`;
+}
+
+function startTimer() {
+  clearInterval(timerInterval); // Clear any existing timer interval to prevent multiple timers from running simultaneously, ensuring that the time tracking is accurate and consistent when starting a new game or resetting the timer
+  timeSeconds = 0;
+
+  const timerDisplay = document.getElementById("time-count");
+  timerInterval = setInterval(() => {
+    timeSeconds++;
+
+    const mins = Math.floor(timeSeconds / 60);
+    const secs = timeSeconds % 60;
+
+    if (timerDisplay) {
+      timerDisplay.innerText = `${mins}:${secs.toString().padStart(2, "0")}`;
+    }
+  }, 1000);
+}
+
+function checkwin() {
+  const allInputs = Array.from(document.querySelectorAll("#sudoku-game input"));
+  const isComplete = allInputs.every(
+    (input) => input.value !== "" && !input.classList.contains("error"),
+  );
+
+  if (isComplete) {
+    showWinScreen();
+  }
+}
+
+function showWinScreen() {
+  const screen = document.getElementById("win-screen");
+  clearInterval(timerInterval); // Stop the game timer when the player wins to prevent it from continuing to run after the game is completed, ensuring that the time tracking is accurate and consistent with the game state when the win screen is displayed
+
+  document.getElementById("final-time").innerText = formatTime(timeSeconds); // Update the final time display on the win screen to reflect the total time taken by the player to solve the puzzle, providing feedback on their performance and rewarding them for their achievement in completing the puzzle within a certain time frame
+  document.getElementById("final-score").innerText = score; // Update the final score display on the win screen to reflect the player's score at the time of winning, providing feedback on their performance and rewarding them for their achievement in completing the puzzle
+
+  if (screen) {
+    screen.classList.remove("hidden");
+  }
+}
+
+function triggerNumberPop(num) {
+  const allInputs = document.querySelectorAll("#sudoku-game input");
+  allInputs.forEach((input) => {
+    if (input.value == num) {
+      input.classList.add("number-pop");
+      setTimeout(() => {
+        input.classList.remove("number-pop");
+      }, 600);
     }
   });
 }
