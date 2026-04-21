@@ -144,6 +144,7 @@ function renderBoard(board) {
 // --- 3. Input & Validation ---
 function handleCellInputs(cell) {
   // 1. SYNC CLICKED CELL TO BUTTONS
+  // This updates the selectedNumber if you click a number already on the board
   if (
     cell.value &&
     !cell.classList.contains("small-text") &&
@@ -155,7 +156,7 @@ function handleCellInputs(cell) {
     );
 
     if (targetBtn) {
-      // Clear all active states
+      // Clear all active states from other buttons
       document
         .querySelectorAll(".number-btn")
         .forEach((b) => b.classList.remove("selected-number"));
@@ -168,45 +169,56 @@ function handleCellInputs(cell) {
   }
 
   // 2. RUN HIGHLIGHTS
+  // We run this BEFORE the guard so that finished numbers still glow!
   highlightAll(selectedNumber, cell);
 
+  // 3. THE GUARD: "Look but don't touch"
+  const currentBtn = document.querySelector(
+    `.number-btn[data-number="${selectedNumber}"]`,
+  );
+  if (currentBtn && currentBtn.classList.contains("hidden-number")) {
+    // Stop here so the player can't place or clear if the number is done
+    return;
+  }
+
+  // 4. EXIT CHECKS
   if (selectedNumber === null || cell.classList.contains("fixed")) return;
   if (cell.value === selectedNumber && !cell.classList.contains("small-text")) {
     return; // Do nothing if the number is already there
   }
 
-  //Helper to record the state BEFORE change ---
+  // Helper to record the state BEFORE change
   const recordMove = () => {
     moveHistory.push({
       cell: cell,
       prevValue: cell.value,
-      prevClass: Array.from(cell.classList), // Stores small-text or error status
+      prevClass: Array.from(cell.classList),
     });
   };
 
+  // Logic for the Clear Tool
   if (selectedNumber === "") {
     if (cell.value !== "") {
-      recordMove(); // Record before clearing
+      recordMove();
       cell.value = "";
       cell.classList.remove("small-text", "error");
     }
     return;
   }
 
-  // Get coordinates (same as your original)
   const allInputs = Array.from(document.querySelectorAll("#sudoku-game input"));
   const index = allInputs.indexOf(cell);
   const row = Math.floor(index / 9);
   const col = index % 9;
 
   if (isMarkSmallMode) {
+    // --- NOTES MODE LOGIC ---
     const numToPlace = parseInt(selectedNumber);
     const currentSolidBoard = Array.from({ length: 9 }, () => Array(9).fill(0));
 
     allInputs.forEach((input, i) => {
       const r = Math.floor(i / 9);
       const c = i % 9;
-      // Note: Here we EXCLUDE small-text to only check against fixed numbers
       if (
         input.classList.contains("fixed") &&
         !input.classList.contains("small-text")
@@ -214,55 +226,63 @@ function handleCellInputs(cell) {
         currentSolidBoard[r][c] = parseInt(input.value);
       }
     });
+
     if (!isValid(currentSolidBoard, row, col, numToPlace)) {
       cell.classList.add("error");
       setTimeout(() => cell.classList.remove("error"), 250);
       return;
     }
-    recordMove(); // Record before marking
-    cell.classList.add("small-text"); // Mark the cell as small text to indicate it's a candidate number
+
+    recordMove();
+    cell.classList.add("small-text");
     if (cell.value.includes(selectedNumber)) {
-      // If the selected number is already marked as a candidate in the cell, remove it from the cell's value to allow toggling candidate numbers on and off for better user experience when marking potential numbers in the Sudoku puzzle
       cell.value = cell.value.replace(selectedNumber, "");
     } else {
-      cell.value = (cell.value + selectedNumber).split("").sort().join(""); // Add the selected number to the cell's value and sort the characters to keep candidate numbers organized within the cell for easier readability when multiple candidates are marked
+      cell.value = (cell.value + selectedNumber).split("").sort().join("");
     }
-    highlightAll(selectedNumber, cell); // Highlight all cells with the same number as the selected number to provide visual feedback on the current selection and potential duplicates, enhancing the user experience when marking candidate numbers in the Sudoku puzzle
+    highlightAll(selectedNumber, cell);
   } else {
-    cell.classList.remove("small-text"); // Ensure that the cell is not marked as small text when placing a number, as placing a number should override any candidate markings to reflect the player's intention to commit to that number in the cell
+    // --- PLACEMENT MODE LOGIC ---
+    cell.classList.remove("small-text");
     const numToPlace = parseInt(selectedNumber);
 
     if (numToPlace === solvedBoard[row][col]) {
-      recordMove(); // Record before placing valid number
+      // CORRECT MOVE
+      recordMove();
       cell.classList.remove("small-text", "error");
       cell.value = selectedNumber;
-      cell.classList.add("fixed"); // Mark the cell as fixed to prevent further changes
-      removeSmallNumbers(row, col, numToPlace); // Remove the placed number from the candidate markings of all cells in the same row, column, and 3x3 subgrid to maintain consistency with Sudoku rules and provide a clearer visual representation of remaining candidate numbers for the player after placing a correct number in the puzzle
+      cell.classList.add("fixed");
+      removeSmallNumbers(row, col, numToPlace);
 
-      score += Math.floor(100 * scoreMulty); // Increment score for placing a correct number, can be used for future features like score tracking or leaderboards
-      updateScoreDisplay(); // Update the score display to reflect the new score after placing a correct number, providing feedback to the player on their progress and performance in the game
-      highlightAll(selectedNumber, cell); // Highlight all cells with the same number as the one just placed to provide visual feedback on the current selection and potential duplicates, enhancing the user experience when placing numbers in the Sudoku puzzle
-      updateNumberButtons(); // Update the number buttons to reflect the new state of the board, hiding any numbers that are now fully placed in the clues to prevent players from selecting numbers that are already completed in the puzzle
-      checkwin(); // Check if the player has won the game after placing a correct number, allowing for the win condition to be evaluated and the win screen to be displayed if the puzzle is completed successfully
+      score += Math.floor(100 * scoreMulty);
+      updateScoreDisplay();
+      highlightAll(selectedNumber, cell);
+      updateNumberButtons();
+      checkwin();
     } else {
-      const penalty = 50 * scoreMulty; // Calculate score penalty based on the current score multiplier, which can be adjusted based on difficulty level or other factors to provide a more dynamic scoring system that rewards players for playing at higher difficulties or with certain playstyles
-      score = Math.max(0, score - penalty); // score penalty cannot reduce below 0
-      updateScoreDisplay(); // Update the score display to reflect the new score after placing an incorrect number, providing feedback to the player on their performance and encouraging careful consideration when making moves in the game
+      // WRONG MOVE
+      const penalty = 50 * scoreMulty;
+      score = Math.max(0, score - penalty);
+      updateScoreDisplay();
       lives--;
       updateLivesDisplay();
       cell.value = selectedNumber;
       cell.classList.add("error");
+
       setTimeout(() => {
-        if (lives <= 0) GameOverScreen();
-        else {
-          cell.value = "";
-          cell.classList.remove("error");
+        if (lives <= 0) {
+          GameOverScreen();
+        } else {
+          // Safety: Don't clear if the user fixed it with a correct move already
+          if (!cell.classList.contains("fixed")) {
+            cell.value = "";
+            cell.classList.remove("error");
+          }
         }
       }, 1000);
     }
   }
-}
-
+} // End of function
 // --- 4. Logic & Algorithms ---
 function isValid(board, row, col, num) {
   // Check if placing the number in the specified row and column is valid according to Sudoku rules (no duplicates in the same row, column, or 3x3 subgrid)
@@ -277,6 +297,7 @@ function isValid(board, row, col, num) {
   }
   return true;
 }
+
 // This function generates a complete Sudoku board by recursively filling in numbers while ensuring that the placement of each number is valid according to Sudoku rules.
 // It uses backtracking to explore different number placements and shuffles the order of numbers to create a unique solution each time.
 function generateFullBoard(board) {
