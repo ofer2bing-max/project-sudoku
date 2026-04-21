@@ -279,6 +279,7 @@ function handleCellInputs(cell) {
             cell.classList.remove("error");
           }
         }
+        checkWIn();
       }, 1000);
     }
   }
