@@ -143,9 +143,7 @@ function renderBoard(board) {
 
 // --- 3. Input & Validation ---
 function handleCellInputs(cell) {
-  highlightAll(cell.value, cell); // Highlight all cells with the same number as the currently clicked cell to provide visual feedback on the current selection and potential duplicates
-
-  // 1. SYNC CLICKED CELL TO BUTTONS (Put this first!)
+  // 1. SYNC CLICKED CELL TO BUTTONS
   if (
     cell.value &&
     !cell.classList.contains("small-text") &&
