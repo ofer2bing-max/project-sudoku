@@ -145,6 +145,33 @@ function renderBoard(board) {
 function handleCellInputs(cell) {
   highlightAll(cell.value, cell); // Highlight all cells with the same number as the currently clicked cell to provide visual feedback on the current selection and potential duplicates
 
+  // 1. SYNC CLICKED CELL TO BUTTONS (Put this first!)
+  if (
+    cell.value &&
+    !cell.classList.contains("small-text") &&
+    !cell.classList.contains("error")
+  ) {
+    const val = cell.value.toString();
+    const targetBtn = document.querySelector(
+      `.number-btn[data-number="${val}"]`,
+    );
+
+    if (targetBtn) {
+      // Clear all active states
+      document
+        .querySelectorAll(".number-btn")
+        .forEach((b) => b.classList.remove("selected-number"));
+      document.getElementById("clear").classList.remove("selected-number");
+
+      // Set the new active button
+      targetBtn.classList.add("selected-number");
+      selectedNumber = val;
+    }
+  }
+
+  // 2. RUN HIGHLIGHTS
+  highlightAll(selectedNumber, cell);
+
   if (selectedNumber === null || cell.classList.contains("fixed")) return;
   if (cell.value === selectedNumber && !cell.classList.contains("small-text")) {
     return; // Do nothing if the number is already there
