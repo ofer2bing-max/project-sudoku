@@ -348,6 +348,9 @@ function GameOverScreen() {
 function resetGame() {
   score = 0;
   lives = 3;
+  timeSeconds = 0;
+  moveHistory = []; // Clear the move history stack when resetting the game to ensure that previous moves from the old game do not interfere with the new game, allowing players to start fresh without any carryover of past actions that could affect the integrity of the new game state
+
   updateLivesDisplay();
   updateScoreDisplay();
 
@@ -364,7 +367,9 @@ function resetGame() {
   }
 
   renderBoard(initialBoard);
+  updateNumberButtons(); // Update the number buttons to reflect the initial state of the board after resetting the game, hiding any numbers that are already fully placed in the clues to prevent players from selecting numbers that are already completed in the puzzle right from the start of the new game session
   startTimer();
+
   selectedNumber = null;
   document.querySelectorAll(".number-btn").forEach((btn) => {
     btn.classList.remove("selected-number"); // 2. Removes the blue highlight from the button
@@ -448,12 +453,6 @@ function updateNumberButtons() {
         triggerNumberPop(num); // Trigger confetti animation when a number is fully placed in the clues, providing a celebratory visual effect to reward the player for completing that number in the puzzle and enhancing the overall gaming experience with positive feedback for their progress
       }
       btn.classList.add("hidden-number");
-
-      if (selectedNumber === num) {
-        selectedNumber = null;
-        btn.classList.remove("selected-number");
-        highlightAll("");
-      }
     } else {
       btn.classList.remove("hidden-number");
     }
