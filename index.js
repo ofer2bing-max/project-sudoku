@@ -61,6 +61,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const input = document.createElement("input");
     input.type = "text";
     input.readOnly = true;
+    input.inputMode = "none"; // Disable mobile keyboard
+    input.addEventListener("focus", (e) => e.preventDefault());
     input.addEventListener("click", function () {
       handleCellInputs(this);
     });
