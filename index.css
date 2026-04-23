@@ -24,30 +24,6 @@ h1 {
   font-size: clamp(2em, 8vw, 3em); /* Shrinks font on smaller screens */
 }
 
-/* 4. Difficulty Selection Row */
-.difficulty {
-  display: flex;
-  flex-wrap: wrap; /* Allows buttons to wrap to a new line on narrow laptops */
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.difficulty button {
-  padding: 8px 16px;
-  border-radius: 20px; /* Makes buttons pill-shaped */
-  border: 2px solid #3d7af5;
-  background: transparent;
-  color: #3d7af5;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.3s; /* Smooth color change on hover */
-}
-
-.difficulty button:hover {
-  background: #3d7af5; /* Fills button with blue on hover */
-  color: white;
-}
 #game-container {
   display: flex;
   flex-direction: column;
@@ -557,65 +533,119 @@ h1 {
   pointer-events: none;
   transition: opacity 0.3s ease;
 }
-
-.overlay-screen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: #f8f9ff;
+/* --- The Main Menu (Hero Section) --- */
+#main-menu {
+  background-color: #ffffff;
   display: flex;
   flex-direction: column;
+  justify-content: space-around; /* Pushes title UP and button DOWN */
   align-items: center;
-  justify-content: center;
+  padding: 80px 0;
   z-index: 3000;
 }
 
-.overlay-screen h1 {
-  font-size: clamp(3em, 15vw, 5em);
-  margin-bottom: 20px;
-  color: #6200ee;
-  letter-spacing: 4px;
-  text-shadow: 2px 2px 0px #eee;
+.logo-text {
+  font-size: clamp(3.5rem, 15vw, 5rem) !important;
+  color: #333 !important; /* Darker, more modern color */
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-shadow: none; /* Removed the old shadow for a cleaner look */
 }
 
-.overlay-screen h2 {
-  color: #6200ee;
-  margin-bottom: 30px;
-  font-weight: 300;
-}
-
-.menu-btn,
-.difficulty-btn {
-  width: 80%;
-  max-width: 280px;
-  padding: 18px;
-  margin: 10px 0;
-  font-size: 1.2rem;
-  font-weight: bold;
-  cursor: pointer;
-  border: none;
-  border-radius: 16px;
-  transition: all 0.1s ease;
-  text-transform: uppercase;
-}
-.menu-btn {
+.main-play-btn {
+  width: 85vw;
+  max-width: 320px;
+  padding: 22px;
   background: #6200ee;
   color: white;
-  box-shadow: 0 6px 0 #3700b3;
+  border: none;
+  border-radius: 18px;
+  font-size: 1.4rem;
+  font-weight: bold;
+  box-shadow: 0 10px 20px rgba(98, 0, 238, 0.2); /* Soft purple glow */
+  cursor: pointer;
+  transition: transform 0.1s;
 }
-.difficulty-btn {
+
+.main-play-btn:active {
+  transform: scale(0.95);
+}
+
+/* --- The Bottom Sheet (The Slide-up Panel) --- */
+.bottom-sheet {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5000;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* Sticks the menu to the bottom */
+}
+
+.sheet-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4); /* Dims the background */
+  backdrop-filter: blur(2px);
+}
+
+.sheet-content {
+  position: relative;
   background: white;
-  color: #6200ee;
-  border: 2px solid #6200ee;
-  box-shadow: 0 5px 0 #3700b3;
+  width: 100%;
+  border-radius: 30px 30px 0 0; /* Rounds the top only */
+  padding: 20px 20px 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: slideUp 0.3s ease-out; /* The slide effect */
 }
-.menu-btn:active,
-.difficulty-btn:active {
-  transform: translateY(4px);
-  box-shadow: 0 2px 0 #3700b3;
+
+.drag-handle {
+  width: 40px;
+  height: 5px;
+  background: #e0e0e0;
+  border-radius: 10px;
+  margin-bottom: 20px;
 }
-.difficulty-btn:hover {
-  background-color: #f3e5f5;
+
+.difficulty-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* The Clean List Buttons */
+.difficulty-btn {
+  width: 100% !important;
+  max-width: none !important;
+  background: #f8f9fa !important;
+  color: #333 !important;
+  border: 1px solid #eee !important;
+  padding: 18px !important;
+  font-size: 1.1rem !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  text-transform: none !important; /* "Easy" instead of "EASY" */
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.difficulty-btn.selected {
+  background: linear-gradient(135deg, var(#8e44ad), var(#5b2c6f));
+  transform: scale(1.05);
+  transition: all 0.2s ease;
 }

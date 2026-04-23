@@ -26,20 +26,34 @@ document.addEventListener("DOMContentLoaded", () => {
   const numButtons = document.querySelectorAll(".number-btn");
   const markSmallBtn = document.getElementById("mark-small");
 
+  // 1. ADD THIS LINE (The variable for your bottom sheet)
+  const difficultyMenu = document.getElementById("difficulty-menu");
+
+  // 2. REPLACE your play-button listener with this:
   document.getElementById("play-button").addEventListener("click", () => {
-    document.getElementById("main-menu").classList.add("hidden");
-    document.getElementById("difficulty-menu").classList.remove("hidden");
+    difficultyMenu.classList.remove("hidden");
+    difficultyMenu.style.display = "flex";
   });
 
+  // 3. ADD THIS (The logic to close the menu if you click the background)
+  document.getElementById("sheet-close-zone").addEventListener("click", () => {
+    difficultyMenu.style.display = "none";
+    difficultyMenu.classList.add("hidden");
+  });
+
+  // 4. REPLACE your difficulty button listeners with this:
   document.querySelectorAll(".difficulty-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       const level = btn.getAttribute("data-level");
+      currentDifficulty = level;
 
-      document.getElementById("difficulty-menu").classList.add("hidden");
+      // Hide both menus and show the game
+      document.getElementById("main-menu").classList.add("hidden");
+      difficultyMenu.style.display = "none";
+      difficultyMenu.classList.add("hidden");
       document.getElementById("game-container").classList.remove("hidden");
 
-      currentDifficulty = level; // Store the selected difficulty level in a global variable to be used when starting the game, allowing for consistent access to the selected difficulty level across different functions and ensuring that the game starts with the correct settings based on the player's choice
-      startGame(level); // Pass the selected difficulty level to the startGame function to initialize the game with the appropriate settings and puzzle generation based on the chosen difficulty, ensuring that the game experience is tailored to the player's selection and providing a consistent and engaging gameplay experience from the moment they start the game
+      startGame(level);
     });
   });
   // Create 81 input cells for the Sudoku board
@@ -88,10 +102,26 @@ document.addEventListener("DOMContentLoaded", () => {
   // Restart button resets the game state and re-renders the initial board clues
   document.getElementById("restart").addEventListener("click", () => {
     resetGame();
-    startTimer(); // Restart the timer when the game is reset to ensure that time tracking is accurate and consistent with the new game state, allowing players to start fresh with a new timer for their new game session
   });
 
   updateNumberButtons(); // Initial update to set the correct state of number buttons based on the initial board clues, hiding any numbers that are already fully placed in the clues to prevent players from selecting numbers that are already completed in the puzzle right from the start of the game
+  // Return to menu from Game Over Screen
+  document.getElementById("new-game-btn")?.addEventListener("click", () => {
+    document.getElementById("Game-over-screen").classList.add("hidden");
+    document.getElementById("Game-over-screen").style.display = "none";
+
+    document.getElementById("game-container").classList.add("hidden");
+    document.getElementById("main-menu").classList.remove("hidden");
+  });
+
+  // Return to menu from Win Screen
+  document.getElementById("win-new-game-btn")?.addEventListener("click", () => {
+    document.getElementById("win-screen").classList.add("hidden");
+    document.getElementById("win-screen").style.display = "none";
+
+    document.getElementById("game-container").classList.add("hidden");
+    document.getElementById("main-menu").classList.remove("hidden");
+  });
 });
 
 // --- 2. Game Core ---
@@ -99,13 +129,20 @@ function startGame(level = currentDifficulty) {
   // Default to currentDifficulty if no level is provided
   document.getElementById("main-menu").classList.add("hidden");
   document.getElementById("difficulty-menu").classList.add("hidden");
+  document.getElementById("difficulty-menu").style.display = "none";
   document.getElementById("Game-over-screen").classList.add("hidden");
+  document.getElementById("Game-over-screen").style.display = "none";
   document.getElementById("win-screen").classList.add("hidden");
+  document.getElementById("win-screen").style.display = "none";
+
   document.getElementById("game-container").classList.remove("hidden");
 
   let board = Array.from({ length: 9 }, () => Array(9).fill(0)); // Create an empty 9x9 board
   lives = 3;
   score = 0;
+  timeSeconds = 0;
+  moveHistory = [];
+  selectedNumber = null;
 
   if (level === "easy") scoreMulty = 1;
   else if (level === "medium") scoreMulty = 1.5;
@@ -222,6 +259,7 @@ function handleCellInputs(cell) {
       recordMove();
       cell.value = "";
       cell.classList.remove("small-text", "error");
+      updateNumberButtons(); // Update the number buttons to reflect the new state of the board after clearing a cell, ensuring that any numbers that are now fully placed in the clues are hidden again to prevent players from selecting numbers that are already completed in the puzzle, maintaining consistency between the board state and the available number options for the player
     }
     return;
   }
@@ -446,6 +484,7 @@ function resetGame() {
   document.querySelectorAll(".number-btn").forEach((btn) => {
     btn.classList.remove("selected-number"); // 2. Removes the blue highlight from the button
   });
+  document.getElementById("clear").classList.remove("selected-number"); // 3. Removes the blue highlight from the clear button
   highlightAll(""); // Clears any highlights off the board cells
 }
 // This function implements the undo functionality by popping the last move from the move history stack and restoring the cell's value and classes to their previous state, allowing players to revert their last action and correct mistakes without affecting the overall game state or losing progress.
@@ -462,6 +501,7 @@ function undo() {
   // Restore classes
   cell.className = ""; // Clear current classes
   lastMove.prevClass.forEach((cls) => cell.classList.add(cls));
+
   highlightAll(selectedNumber); // Update highlights after undoing the move to ensure that the visual feedback on the board is consistent with the current state of the game, allowing players to see the correct highlights based on their current selection and the restored state of the board after undoing a move
   updateNumberButtons(); // Update the number buttons to reflect the new state of the board after undoing a move, ensuring that any numbers that are now fully placed in the clues are hidden again to prevent players from selecting numbers that are already completed in the puzzle, maintaining consistency between the board state and the available number options for the player
 }
@@ -616,4 +656,13 @@ function triggerNumberPop(num) {
       }, 600);
     }
   });
+}
+
+function showDifficultyMenu() {
+  document.getElementById("Game-over-screen").stytle.display = "none";
+  document.getElementById("win-screen").style.display = "none";
+
+  const difficultyMenu = document.getElementById("difficulty-menu");
+  difficultyMenu.classList.remove("hidden");
+  difficultyMenu.style.display = "flex";
 }
