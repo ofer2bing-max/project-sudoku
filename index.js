@@ -25,6 +25,23 @@ document.addEventListener("DOMContentLoaded", () => {
   const board = document.getElementById("sudoku-game");
   const numButtons = document.querySelectorAll(".number-btn");
   const markSmallBtn = document.getElementById("mark-small");
+
+  document.getElementById("play-button").addEventListener("click", () => {
+    document.getElementById("main-menu").classList.add("hidden");
+    document.getElementById("difficulty-menu").classList.remove("hidden");
+  });
+
+  document.querySelectorAll(".difficulty-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const level = btn.getAttribute("data-level");
+
+      document.getElementById("difficulty-menu").classList.add("hidden");
+      document.getElementById("game-container").classList.remove("hidden");
+
+      currentDifficulty = level; // Store the selected difficulty level in a global variable to be used when starting the game, allowing for consistent access to the selected difficulty level across different functions and ensuring that the game starts with the correct settings based on the player's choice
+      startGame(level); // Pass the selected difficulty level to the startGame function to initialize the game with the appropriate settings and puzzle generation based on the chosen difficulty, ensuring that the game experience is tailored to the player's selection and providing a consistent and engaging gameplay experience from the moment they start the game
+    });
+  });
   // Create 81 input cells for the Sudoku board
   for (let i = 0; i < 81; i++) {
     const input = document.createElement("input");
@@ -74,15 +91,17 @@ document.addEventListener("DOMContentLoaded", () => {
     startTimer(); // Restart the timer when the game is reset to ensure that time tracking is accurate and consistent with the new game state, allowing players to start fresh with a new timer for their new game session
   });
 
-  startGame();
   updateNumberButtons(); // Initial update to set the correct state of number buttons based on the initial board clues, hiding any numbers that are already fully placed in the clues to prevent players from selecting numbers that are already completed in the puzzle right from the start of the game
 });
 
 // --- 2. Game Core ---
 function startGame(level = currentDifficulty) {
   // Default to currentDifficulty if no level is provided
+  document.getElementById("main-menu").classList.add("hidden");
+  document.getElementById("difficulty-menu").classList.add("hidden");
   document.getElementById("Game-over-screen").classList.add("hidden");
   document.getElementById("win-screen").classList.add("hidden");
+  document.getElementById("game-container").classList.remove("hidden");
 
   let board = Array.from({ length: 9 }, () => Array(9).fill(0)); // Create an empty 9x9 board
   lives = 3;

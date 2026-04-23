@@ -1,6 +1,7 @@
 /* 1. Global Reset - Fixes how widths are calculated */
 * {
   box-sizing: border-box; /* Includes border/padding in total width so elements don't overflow */
+  -webkit-tap-highlight-color: transparent; /* Removes the blue highlight on mobile when tapping buttons */
 }
 
 /* 2. Page Container - Centers the game on the screen */
@@ -47,6 +48,14 @@ h1 {
   background: #3d7af5; /* Fills button with blue on hover */
   color: white;
 }
+#game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  animation: fadeIn 0.4s ease-in; /* Smooth entrance */
+}
 
 /* 5. The Sudoku Grid */
 #sudoku-game {
@@ -62,7 +71,16 @@ h1 {
   background-color: black; /* Acts as the "border" between cells */
   gap: 1px; /* The thickness of the thin lines */
 }
-
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
 #sudoku-game input {
   width: 100%;
   height: 100%;
@@ -538,4 +556,66 @@ h1 {
   visibility: hidden;
   pointer-events: none;
   transition: opacity 0.3s ease;
+}
+
+.overlay-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #f8f9ff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+}
+
+.overlay-screen h1 {
+  font-size: clamp(3em, 15vw, 5em);
+  margin-bottom: 20px;
+  color: #6200ee;
+  letter-spacing: 4px;
+  text-shadow: 2px 2px 0px #eee;
+}
+
+.overlay-screen h2 {
+  color: #6200ee;
+  margin-bottom: 30px;
+  font-weight: 300;
+}
+
+.menu-btn,
+.difficulty-btn {
+  width: 80%;
+  max-width: 280px;
+  padding: 18px;
+  margin: 10px 0;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  border-radius: 16px;
+  transition: all 0.1s ease;
+  text-transform: uppercase;
+}
+.menu-btn {
+  background: #6200ee;
+  color: white;
+  box-shadow: 0 6px 0 #3700b3;
+}
+.difficulty-btn {
+  background: white;
+  color: #6200ee;
+  border: 2px solid #6200ee;
+  box-shadow: 0 5px 0 #3700b3;
+}
+.menu-btn:active,
+.difficulty-btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #3700b3;
+}
+.difficulty-btn:hover {
+  background-color: #f3e5f5;
 }
