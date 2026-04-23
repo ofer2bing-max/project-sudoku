@@ -8,15 +8,23 @@
   </head>
   <body>
     <div id="main-menu" class="overlay-screen">
-      <h1>Sudoku Game</h1>
-      <button id="play-button" class="menu-btn">PLAY</button>
+        <h1 class="logo-text">SUDOKU</h1>
+      <button id="play-button" class="main-play-btn">PLAY</button>
+    </div>
     </div>
 
-    <div id="difficulty-menu" class="overlay-screen hidden">
+    <div id="difficulty-menu" class="bottom-sheet hidden">
+      <div class="sheet-overlay" id="sheet-close-zone"></div>
+      <div class="sheet-content">
+        <div class="drag-handle"></div>
+        <h2 class="sheet-title">Select Difficulty</h2>
+     <div class="difficulty-list">   
       <button class="difficulty-btn" data-level="easy">Easy</button>
-      <button class="difficulty-btn" data-level="medium">Medium</button>
+      <button class="difficulty-btn selected" data-level="medium">Medium</button>
       <button class="difficulty-btn" data-level="hard">Hard</button>
       <button class="difficulty-btn" data-level="expert">Expert</button>
+    </div>
+      </div>
     </div>
 
   <div id="game-container" class="hidden">
@@ -89,15 +97,15 @@
           <p>You ran out of lives!</p>
       <div class="game-over-buttons">
         <button id="restart-btn" onclick="resetGame()">Play Again</button>
-        <button id="new-game-btn" onclick="startGame()">New Game</button>
+        <button id="new-game-btn" onclick="showDifficultyMenu()">New Game</button>
       </div>
     </div>
 
     <div id="win-screen" class="hidden">
       <div class="winner-content">
         <h2>Victory!</h2>
-        <p>good job yuval goon!</p>
-    
+          <p>You completed the puzzle!</p>
+
       <div class="final-stats-container">
         <div class="final-stat">
          <span class="stat-label">TIME</span>
@@ -112,7 +120,7 @@
     <div class="winner-actions-container">
        <div class="winner-buttons">
         <button class="win-btn primary" onclick="resetGame()">Play Again</button>
-        <button class="win-btn secondary" onclick="startGame()">New Game</button>
+        <button  id="win-new-game-btn" class="win-btn secondary" onclick="showDifficultyMenu()">New Game</button>
       </div>
     </div> 
     
