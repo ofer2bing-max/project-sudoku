@@ -1,16 +1,17 @@
 // --- Global Variables ---
 // Difficulty levels mapped to the number of holes to dig
 const difficultyLevels = {
-  easy: 35,
-  medium: 45,
-  hard: 55,
-  expert: 60,
+  Easy: 35,
+  Medium: 43,
+  Hard: 53,
+  Advanced: 59,
+  Impossible: 64,
 };
 
 let selectedNumber = null; // Tracks the current selected number for input
 let isMarkSmallMode = false; // Flag to indicate if the player is in "mark small numbers" mode
 let lives = 3;
-let currentDifficulty = "medium";
+let currentDifficulty = "Medium"; // Initialize to the default difficulty level
 let initialBoard = []; // Persistent storage for the level's starting clues
 let moveHistory = []; // Stack to keep track of moves for undo functionality, storing the cell reference, previous value, and previous classes to allow accurate restoration of the cell's state when undoing a move
 let solvedBoard = []; // Store the fully solved board for potential future features like hints or solution reveal
@@ -146,10 +147,11 @@ function startGame(level = currentDifficulty) {
   moveHistory = [];
   selectedNumber = null;
 
-  if (level === "easy") scoreMulty = 1;
-  else if (level === "medium") scoreMulty = 1.5;
-  else if (level === "hard") scoreMulty = 2;
-  else if (level === "expert") scoreMulty = 3;
+  if (level === "Easy") scoreMulty = 1;
+  else if (level === "Medium") scoreMulty = 1.5;
+  else if (level === "Hard") scoreMulty = 2;
+  else if (level === "Advanced") scoreMulty = 3;
+  else if (level === "Impossible") scoreMulty = 4;
 
   updateLivesDisplay();
   updateScoreDisplay();
@@ -337,6 +339,7 @@ function handleCellInputs(cell) {
           if (!cell.classList.contains("fixed")) {
             cell.value = "";
             cell.classList.remove("error");
+            updateNumberButtons(); // Update the number buttons to reflect the new state of the board after handling a wrong move, ensuring that any numbers that are now fully placed in the clues are hidden again to prevent players from selecting numbers that are already completed in the puzzle, maintaining consistency between the board state and the available number options for the player even after making a mistake, allowing for a more forgiving gameplay experience where players can recover from errors without permanently affecting their ability to select numbers based on the current state of the board
           }
         }
         checkwin(); // Check win condition after handling the wrong move to ensure that the game state is updated correctly and any potential win condition is evaluated even after a wrong move, allowing for scenarios where a player might still win the game despite making a mistake, as long as they correct it within their remaining lives
@@ -545,9 +548,14 @@ function highlightAll(targetNumber, clickedCell) {
 function updateNumberButtons() {
   const allInputs = Array.from(document.querySelectorAll("#sudoku-game input"));
   const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 };
+
   allInputs.forEach((input) => {
     const val = input.value;
-    if (val && !input.classList.contains("small-text")) {
+    if (
+      val &&
+      !input.classList.contains("small-text") &&
+      !input.classList.contains("error")
+    ) {
       if (val.length === 1) {
         counts[val]++;
       }
@@ -661,7 +669,7 @@ function triggerNumberPop(num) {
 }
 
 function showDifficultyMenu() {
-  document.getElementById("Game-over-screen").stytle.display = "none";
+  document.getElementById("Game-over-screen").style.display = "none";
   document.getElementById("win-screen").style.display = "none";
 
   const difficultyMenu = document.getElementById("difficulty-menu");

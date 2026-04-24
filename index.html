@@ -11,7 +11,6 @@
         <h1 class="logo-text">SUDOKU</h1>
       <button id="play-button" class="main-play-btn">PLAY</button>
     </div>
-    </div>
 
     <div id="difficulty-menu" class="bottom-sheet hidden">
       <div class="sheet-overlay" id="sheet-close-zone"></div>
@@ -19,10 +18,11 @@
         <div class="drag-handle"></div>
         <h2 class="sheet-title">Select Difficulty</h2>
      <div class="difficulty-list">   
-      <button class="difficulty-btn" data-level="easy">Easy</button>
-      <button class="difficulty-btn selected" data-level="medium">Medium</button>
-      <button class="difficulty-btn" data-level="hard">Hard</button>
-      <button class="difficulty-btn" data-level="expert">Expert</button>
+      <button class="difficulty-btn" data-level="Easy">Easy</button>
+      <button class="difficulty-btn selected" data-level="Medium">Medium</button>
+      <button class="difficulty-btn" data-level="Hard">Hard</button>
+      <button class="difficulty-btn" data-level="Advanced">Advanced</button>
+      <button class="difficulty-btn" data-level="Impossible">Impossible</button>
     </div>
       </div>
     </div>
@@ -70,6 +70,11 @@
       </div>
 
       <div class="button-actions">
+        <div class="action-item" id="home-button" onclick="showDifficultyMenu()">
+          <div class="icon">🏠</div>
+            <span>Home</span>
+        </div>
+
         <div class="action-item" id="restart">
           <div class="icon">↺</div>
            <span>Restart</span>
