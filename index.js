@@ -66,6 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
     input.addEventListener("focus", (e) => e.preventDefault());
     input.addEventListener("click", function () {
       handleCellInputs(this);
+      this.blur(); // Remove focus to prevent mobile keyboard from appearing
     });
     board.appendChild(input);
   }
@@ -139,6 +140,8 @@ function startGame(level = currentDifficulty) {
   document.getElementById("win-screen").style.display = "none";
 
   document.getElementById("game-container").classList.remove("hidden");
+  isMarkSmallMode = false; // Reset to placement mode at the start of the game
+  document.getElementById("mark-small").classList.remove("active-mark"); // Ensure the mark small button is in the correct state at the start of the game
 
   let board = Array.from({ length: 9 }, () => Array(9).fill(0)); // Create an empty 9x9 board
   lives = 3;
@@ -300,7 +303,7 @@ function handleCellInputs(cell) {
     if (cell.value.includes(selectedNumber)) {
       cell.value = cell.value.replace(selectedNumber, "");
     } else {
-      cell.value = (cell.value + selectedNumber).split("").sort().join("");
+      cell.value = (cell.value + selectedNumber).split("").sort().join(" ");
     }
     highlightAll(selectedNumber, cell);
   } else {
