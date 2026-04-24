@@ -303,7 +303,7 @@ function handleCellInputs(cell) {
     if (cell.value.includes(selectedNumber)) {
       cell.value = cell.value.replace(selectedNumber, "");
     } else {
-      cell.value = (cell.value + selectedNumber).split("").sort().join(" ");
+      cell.value = (cell.value + selectedNumber).split("").sort().join("");
     }
     highlightAll(selectedNumber, cell);
   } else {
