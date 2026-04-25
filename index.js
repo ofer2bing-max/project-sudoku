@@ -735,11 +735,11 @@ function checkSecCompletion(row, col) {
     const cell = inputs[targetRow * 9 + targetCol];
     //calculate the distance from the placed number to create timing
     const distance = Math.abs(row - targetRow) + Math.abs(col - targetCol);
-    const delay = distance * 50; //50ms per step forward
+    const delay = distance * 90; //90ms per step forward
 
     setTimeout(() => {
       cell.classList.add("animate-complete");
-      setTimeout(() => cell.classList.remove("animate-complete"), 600);
+      setTimeout(() => cell.classList.remove("animate-complete"), 1000);
     }, delay);
   };
 
