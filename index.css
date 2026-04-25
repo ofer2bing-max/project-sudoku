@@ -540,12 +540,11 @@ h1 {
   50% {
     background-color: var(--accent-purple);
     transform: scale(1.05);
-    color: black !important;
-    box-shadow: 0 0 20px rgba(61, 122, 245, 0.6);
-    z-index: 10;
+    box-shadow: inset 0 0 15px var(--primary-color);
+    z-index: 5;
   }
   100% {
-    background-color: #e8f0fe;
+    background-color: white;
     transform: scale(1);
   }
 }
