@@ -1,7 +1,7 @@
 // --- Global Variables ---
 // Difficulty levels mapped to the number of holes to dig
 const difficultyLevels = {
-  Easy: 35,
+  Easy: 30,
   Medium: 43,
   Hard: 53,
   Advanced: 59,
@@ -19,7 +19,7 @@ let score = 0; // Placeholder for score tracking, can be implemented based on ti
 let scoreMulty = 1; // Placeholder for score multiplier, can be used to increase score based on difficulty level or other factors in the future
 let timeSeconds = 0; // Placeholder for time tracking, can be implemented to track the time taken by the player to solve the puzzle and potentially use it for scoring or providing feedback on performance in the future
 let timerInterval = null; // Placeholder for timer interval, can be used to manage the timing mechanism for tracking how long the player has been playing the current puzzle, allowing for features like time-based scoring or performance feedback in the future
-
+let correctStreak = 0;
 // --- 1. Initialization ---
 document.addEventListener("DOMContentLoaded", () => {
   // Ensure the DOM is fully loaded before accessing elements and initializing the game
@@ -146,6 +146,7 @@ function startGame(level = currentDifficulty) {
   let board = Array.from({ length: 9 }, () => Array(9).fill(0)); // Create an empty 9x9 board
   lives = 3;
   score = 0;
+  correctStreak = 0;
   timeSeconds = 0;
   moveHistory = [];
   selectedNumber = null;
@@ -317,16 +318,26 @@ function handleCellInputs(cell) {
       cell.classList.remove("small-text", "error");
       cell.value = selectedNumber;
       cell.classList.add("fixed");
-      removeSmallNumbers(row, col, numToPlace);
 
-      score += Math.floor(100 * scoreMulty);
+      correctStreak++;
+      let Bonus = 0;
+      if (correctStreak >= 4) {
+        Bonus = Math.floor(50 * scoreMulty);
+      }
+      score += Math.floor(100 * scoreMulty) + Bonus;
+
+      removeSmallNumbers(row, col, numToPlace);
       updateScoreDisplay();
       updateNumberButtons();
-      highlightAll(selectedNumber, cell);
+
+      if (currentBtn && !currentBtn.classList.contains("hidden-number")) {
+        highlightAll(selectedNumber, cell);
+      }
       checkSecCompletion(row, col);
       checkwin();
     } else {
       // WRONG MOVE
+      correctStreak = 0;
       const penalty = 50 * scoreMulty;
       score = Math.max(0, score - penalty);
       updateScoreDisplay();
@@ -577,7 +588,33 @@ function updateNumberButtons() {
 
     if (remaining <= 0) {
       if (!btn.classList.contains("hidden-number")) {
-        triggerNumberPop(num); // Trigger confetti animation when a number is fully placed in the clues, providing a celebratory visual effect to reward the player for completing that number in the puzzle and enhancing the overall gaming experience with positive feedback for their progress
+        triggerNumberPop(num); // Trigger animation when a number is fully placed in the clues, providing a celebratory visual effect to reward the player for completing that number in the puzzle and enhancing the overall gaming experience with positive feedback for their progress
+        if (selectedNumber === num) {
+          highlightAll("");
+          let nextNum = null;
+          const allBtns = Array.from(document.querySelectorAll(".number-btn"));
+
+          for (let i = 1; i <= 9; i++) {
+            let checkNum = ((parseInt(num) + i - 1) % 9) + 1;
+            let checkBtn = document.querySelector(
+              `.number-btn[data-number="${checkNum}"]`,
+            );
+
+            if (checkBtn && !checkBtn.classList.contains("hidden-number")) {
+              nextNum = checkNum.toString();
+              break;
+            }
+          }
+          if (nextNum) {
+            const nextBtn = document.querySelector(
+              `.number-btn[data-number="${nextNum}"]`,
+            );
+            nextBtn.click();
+          } else {
+            selectedNum = null;
+            btn.classList.remove("selectedNumber");
+          }
+        }
       }
       btn.classList.add("hidden-number");
     } else {

@@ -80,7 +80,7 @@
           <div class="icon">↺</div>
            <span>Restart</span>
         </div>
-
+        
         <div class="action-item" id="mark-small">
           <div class="icon">✎</div>
              <span>Notes</span>
@@ -102,7 +102,7 @@
              <h2>Game Over</h2>
           <p>You ran out of lives!</p>
       <div class="game-over-buttons">
-        <button id="restart-btn" onclick="resetGame()">Play Again</button>
+        <button id="restart-btn" onclick="resetGame()">Retry</button>
         <button id="new-game-btn" onclick="showDifficultyMenu()">New Game</button>
       </div>
     </div>
@@ -127,10 +127,11 @@
        </div>
     </div>
 
+
     <div class="winner-actions-container">
        <div class="winner-buttons">
-        <button class="win-btn primary" onclick="resetGame()">Play Again</button>
-        <button  id="win-new-game-btn" class="win-btn secondary" onclick="showDifficultyMenu()">New Game</button>
+        <button class="win-btn primary" onclick="startGame()">New Game</button>
+        <button  id="win-new-game-btn" class="win-btn secondary" onclick="showDifficultyMenu()">Main Menu</button>
       </div>
     </div> 
    </div>
