@@ -107,24 +107,39 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("restart").addEventListener("click", () => {
     resetGame();
   });
+  document.getElementById("home-button")?.addEventListener("click", () => {
+    document.getElementById("game-container").classList.add("hidden");
+    document.getElementById("win-screen").classList.add("hidden");
+    document.getElementById("win-screen").style.display = "none";
+    document.getElementById("Game-over-screen").classList.add("hidden");
+    document.getElementById("Game-over-screen").style.display = "none";
+
+    const difficultyMenu = document.getElementById("difficulty-menu");
+    if (difficultyMenu) {
+      difficultyMenu.classList.add("hidden");
+      difficultyMenu.style.display = "none";
+    }
+    document.getElementById("main-menu").classList.remove("hidden");
+    clearInterval(timerInterval);
+  });
 
   updateNumberButtons(); // Initial update to set the correct state of number buttons based on the initial board clues, hiding any numbers that are already fully placed in the clues to prevent players from selecting numbers that are already completed in the puzzle right from the start of the game
   // Return to menu from Game Over Screen
   document.getElementById("new-game-btn")?.addEventListener("click", () => {
-    document.getElementById("Game-over-screen").classList.add("hidden");
-    document.getElementById("Game-over-screen").style.display = "none";
-
-    document.getElementById("game-container").classList.add("hidden");
-    document.getElementById("main-menu").classList.remove("hidden");
+    const difficultyMenu = document.getElementById("difficulty-menu");
+    if (difficultyMenu) {
+      difficultyMenu.classList.remove("hidden");
+      difficultyMenu.style.display = "flex";
+    }
   });
 
   // Return to menu from Win Screen
   document.getElementById("win-new-game-btn")?.addEventListener("click", () => {
-    document.getElementById("win-screen").classList.add("hidden");
-    document.getElementById("win-screen").style.display = "none";
-
-    document.getElementById("game-container").classList.add("hidden");
-    document.getElementById("main-menu").classList.remove("hidden");
+    const difficultyMenu = document.getElementById("difficulty-menu");
+    if (difficultyMenu) {
+      difficultyMenu.classList.remove("hidden");
+      difficultyMenu.style.display = "flex";
+    }
   });
 });
 
@@ -134,8 +149,10 @@ function startGame(level = currentDifficulty) {
   document.getElementById("main-menu").classList.add("hidden");
   document.getElementById("difficulty-menu").classList.add("hidden");
   document.getElementById("difficulty-menu").style.display = "none";
+
   document.getElementById("Game-over-screen").classList.add("hidden");
   document.getElementById("Game-over-screen").style.display = "none";
+
   document.getElementById("win-screen").classList.add("hidden");
   document.getElementById("win-screen").style.display = "none";
 
@@ -716,6 +733,8 @@ function triggerNumberPop(num) {
 function showDifficultyMenu() {
   document.getElementById("Game-over-screen").style.display = "none";
   document.getElementById("win-screen").style.display = "none";
+
+  const mainm = document.getElementById("main-menu");
 
   const difficultyMenu = document.getElementById("difficulty-menu");
   difficultyMenu.classList.remove("hidden");

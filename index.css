@@ -407,11 +407,8 @@ h1 {
 }
 
 #clear.selected-number .icon {
-  background-color: var(
-    --primary-color
-  ) !important; /* This makes the circle red */
+  background-color: var(--primary-color) !important;
   color: var(--white) !important;
-  border: 2px solid var(--dark-purple);
   transform: scale(1.1);
 }
 
@@ -437,7 +434,7 @@ h1 {
   line-height: 1.2 !important;
 
   /* Very tiny margin-style padding */
-  padding: 1px 0 0 3px !important;
+  padding: 1px 0 0 3px;
 
   /* Ensure the background stays white */
   background-color: #fff !important;
