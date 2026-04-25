@@ -321,8 +321,9 @@ function handleCellInputs(cell) {
 
       score += Math.floor(100 * scoreMulty);
       updateScoreDisplay();
-      highlightAll(selectedNumber, cell);
       updateNumberButtons();
+      highlightAll(selectedNumber, cell);
+      checkSecCompletion(row, col);
       checkwin();
     } else {
       // WRONG MOVE
@@ -650,12 +651,16 @@ function showWinScreen() {
   const screen = document.getElementById("win-screen");
   clearInterval(timerInterval); // Stop the game timer when the player wins to prevent it from continuing to run after the game is completed, ensuring that the time tracking is accurate and consistent with the game state when the win screen is displayed
 
+  triggerAnim();
+
   document.getElementById("final-time").innerText = formatTime(timeSeconds); // Update the final time display on the win screen to reflect the total time taken by the player to solve the puzzle, providing feedback on their performance and rewarding them for their achievement in completing the puzzle within a certain time frame
   document.getElementById("final-score").innerText = score; // Update the final score display on the win screen to reflect the player's score at the time of winning, providing feedback on their performance and rewarding them for their achievement in completing the puzzle
-
+  document.getElementById("final-lives").innerText = lives;
   if (screen) {
-    screen.classList.remove("hidden");
-    screen.style.display = "flex"; // Ensure the win screen is displayed as a flex container for proper layout of its contents, providing a visually appealing and organized presentation of the win message and options for the player when they successfully complete the game
+    setTimeout(() => {
+      screen.classList.remove("hidden");
+      screen.style.display = "flex"; // Ensure the win screen is displayed as a flex container for proper layout of its contents, providing a visually appealing and organized presentation of the win message and options for the player when they successfully complete the game
+    }, 1000);
   }
 }
 
@@ -678,4 +683,65 @@ function showDifficultyMenu() {
   const difficultyMenu = document.getElementById("difficulty-menu");
   difficultyMenu.classList.remove("hidden");
   difficultyMenu.style.display = "flex";
+}
+
+function triggerAnim() {
+  const duration = 5 * 1000; //5 seconds of confetti
+  const endAnim = Date.now() + duration;
+  const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+  function rndInRange(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+  const interval = setInterval(function () {
+    const timeLeft = endAnim - Date.now();
+
+    if (timeLeft <= 0) {
+      return clearInterval(interval);
+    }
+    const particalCount = 50 * (timeLeft / duration);
+    confetti({
+      ...defaults,
+      particalCount,
+      origin: { x: rndInRange(0.1, 0.3), y: Math.random() - 0.2 },
+    });
+    confetti({
+      ...defaults,
+      particalCount,
+      origin: { x: rndInRange(0.7, 0.9), y: Math.random() - 0.2 },
+    });
+  }, 250);
+}
+function checkSecCompletion(row, col) {
+  const inputs = Array.from(document.querySelectorAll("#sudoku-game input"));
+  const rStart = Math.floor(row / 3) * 3;
+  const cStart = Math.floor(col / 3) * 3;
+
+  const isRowFull = [...Array(9)].every(
+    (_, i) => inputs[row * 9 + i].value !== "",
+  );
+  const isColFull = [...Array(9)].every(
+    (_, i) => inputs[i * 9 + col].value !== "",
+  );
+
+  const isBoxFull = [...Array(9)].every((_, i) => {
+    const r = rStart + Math.floor(i / 3);
+    const c = cStart + (i % 3);
+    return inputs[r * 9 + c].value !== "";
+  });
+
+  for (let i = 0; i < 9; i++) {
+    if (isRowFull) inputs[row * 9 + i].classList.add("animate-complete");
+    if (isColFull) inputs[i * 9 + col].classList.add("animate-complete");
+    if (isBoxFull) {
+      const r = rStart + Math.floor(i / 3);
+      const c = cStart + (i % 3);
+      inputs[r * 9 + c].classList.add("animate-complete");
+    }
+  }
+
+  setTimeout(() => {
+    inputs.forEach((inp) => inp.classList.remove("animate-complete"));
+  }, 900);
 }
