@@ -535,35 +535,26 @@ h1 {
 }
 @keyframes section-complete {
   0% {
-    background-color: white;
     transform: scale(1);
-    z-index: 1;
+    background-color: white;
   }
-  15% {
-    /* Fast "Pop" to the highlight color */
+  30% {
+    transform: scale(1.1);
     background-color: #d1c4e9;
-    transform: scale(1.08); /* Makes the row look bigger/above others */
-    box-shadow: 0 0 15px rgba(142, 68, 173, 0.5);
-    z-index: 10;
-  }
-  85% {
-    /* HOLD the color and size so you can see it */
-    background-color: #d1c4e9;
-    transform: scale(1.08);
-    box-shadow: 0 0 15px rgba(142, 68, 173, 0.5);
+    box-shadow: 0 0 10px rgba(142, 68, 173, 0.4);
     z-index: 10;
   }
   100% {
-    /* Smooth fade back to normal */
-    background-color: white;
     transform: scale(1);
-    z-index: 1;
+    background-color: white;
   }
 }
 
 .animate-complete {
-  /* 1.4 seconds feels like a premium "Victory" moment */
-  animation: section-complete 1.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  /* Snappy duration like the number buttons */
+  animation: section-complete 0.5s ease-out;
+  /* Ensure borders stay visible during the pop */
+  outline: 1px solid var(--primary-color);
 }
 
 .number-pop {

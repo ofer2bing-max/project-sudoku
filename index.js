@@ -730,18 +730,26 @@ function checkSecCompletion(row, col) {
     const c = cStart + (i % 3);
     return inputs[r * 9 + c].value !== "";
   });
+  //helps with ripple delay
+  const animDelay = (targetRow, targetCol) => {
+    const cell = inputs[targetRow * 9 + targetCol];
+    //calculate the distance from the placed number to create timing
+    const distance = Math.abs(row - targetRow) + Math.abs(col - targetCol);
+    const delay = distance * 50; //50ms per step forward
+
+    setTimeout(() => {
+      cell.classList.add("animate-complete");
+      setTimeout(() => cell.classList.remove("animate-complete"), 600);
+    }, delay);
+  };
 
   for (let i = 0; i < 9; i++) {
-    if (isRowFull) inputs[row * 9 + i].classList.add("animate-complete");
-    if (isColFull) inputs[i * 9 + col].classList.add("animate-complete");
+    if (isRowFull) animDelay(row, i);
+    if (isColFull) animDelay(i, col);
     if (isBoxFull) {
       const r = rStart + Math.floor(i / 3);
       const c = cStart + (i % 3);
-      inputs[r * 9 + c].classList.add("animate-complete");
+      animDelay(r, c);
     }
   }
-
-  setTimeout(() => {
-    inputs.forEach((inp) => inp.classList.remove("animate-complete"));
-  }, 900);
 }
