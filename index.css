@@ -18,7 +18,7 @@ body {
   display: flex; /* Enables flexbox layout */
   align-items: center; /* Centers everything horizontally */
   justify-content: center; /* Centers everything vertically */
-  min-height: 100vh; /* Makes body at least as tall as the screen */
+  min-height: 100dvh; /* Makes body at least as tall as the screen */
   margin: 0;
   padding: 20px 0; /* Adds breathing room at top/bottom */
   flex-direction: column; /* Stacks title, grid, and buttons in a column */
@@ -53,10 +53,10 @@ h1 {
   display: grid; /* Creates the layout for the 81 cells */
   grid-template-columns: repeat(9, 1fr); /* Creates 9 equal columns */
   grid-template-rows: repeat(9, 1fr); /* Creates 9 equal rows */
-  width: 90vmin; /* Uses 90% of the screen's shortest side */
-  height: 90vmin; /* Keeps it square */
-  max-width: 500px; /* Prevents it from getting too big on desktop */
-  max-height: 500px;
+  width: 80vmin; /* Uses 90% of the screen's shortest side */
+  height: 80vmin; /* Keeps it square */
+  max-width: 450px; /* Prevents it from getting too big on desktop */
+  max-height: 450px;
   margin: 10px auto;
   border: 4px solid black;
   background-color: black; /* Acts as the "border" between cells */
