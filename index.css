@@ -18,9 +18,9 @@ body {
   display: flex; /* Enables flexbox layout */
   align-items: center; /* Centers everything horizontally */
   justify-content: center; /* Centers everything vertically */
-  min-height: 100vh; /* Makes body at least as tall as the screen */
+  height: 100dvh; /* Makes body at least as tall as the screen */
   margin: 0;
-  padding: 20px 0; /* Adds breathing room at top/bottom */
+  padding: 0; 
   flex-direction: column; /* Stacks title, grid, and buttons in a column */
   font-family: sans-serif;
   user-select: none; /* Stops text highlighting when you click the board fast */
@@ -33,7 +33,7 @@ body {
 /* 3. Title */
 h1 {
   text-align: center;
-  margin-bottom: 20px;
+  margin: 10px 0 5px 0;
   font-size: clamp(2em, 8vw, 3em); /* Shrinks font on smaller screens */
 }
 
@@ -41,6 +41,8 @@ h1 {
   position: relative;
   height: 100%;
   display: flex;
+  flex: 1;
+  justify-content: space-evenly;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -53,10 +55,10 @@ h1 {
   display: grid; /* Creates the layout for the 81 cells */
   grid-template-columns: repeat(9, 1fr); /* Creates 9 equal columns */
   grid-template-rows: repeat(9, 1fr); /* Creates 9 equal rows */
-  width: 90vmin; /* Uses 90% of the screen's shortest side */
-  height: 90vmin; /* Keeps it square */
-  max-width: 500px; /* Prevents it from getting too big on desktop */
-  max-height: 500px;
+  width: 80vmin; /* Uses 90% of the screen's shortest side */
+  height: 80vmin; /* Keeps it square */
+  max-width: 450px; /* Prevents it from getting too big on desktop */
+  max-height: 450px;
   margin: 10px auto;
   border: 4px solid black;
   background-color: black; /* Acts as the "border" between cells */
@@ -254,13 +256,13 @@ h1 {
 
 /* 7. Controls & 1-9 Number Buttons */
 .controls {
-  width: 90vmin;
-  max-width: 500px;
+  width: 80vmin;
+  max-width: 450px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
-  margin-top: 20px;
+  gap: 10px;
+  margin-top: 10px;
 }
 
 .number-buttons {
