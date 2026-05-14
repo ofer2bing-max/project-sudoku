@@ -7,7 +7,9 @@ const difficultyLevels = {
   Advanced: 59,
   Impossible: 64,
 };
-
+let dnumSound =new Audio('dNum.mp3');
+let noSound = new Audio('no.mp3');
+let errorSound = new Audio('error.wav');
 let selectedNumber = null; // Tracks the current selected number for input
 let isMarkSmallMode = false; // Flag to indicate if the player is in "mark small numbers" mode
 let lives = 3;
@@ -354,6 +356,7 @@ function handleCellInputs(cell) {
       checkwin();
     } else {
       // WRONG MOVE
+      errorSound.play();
       correctStreak = 0;
       const penalty = 50 * scoreMulty;
       score = Math.max(0, score - penalty);
@@ -482,6 +485,7 @@ function GameOverScreen() {
   clearInterval(timerInterval); // Stop the game timer when the game is over to prevent it from continuing to run after the player has lost, ensuring that the time tracking is accurate and consistent with the game state when the game over screen is displayed
 
   if (screen) {
+    noSound.play();
     screen.classList.remove("hidden");
     screen.style.display = "flex"; // Ensure the game over screen is displayed as a flex container for proper layout of its contents, providing a visually appealing and organized presentation of the game over message and options for the player when they lose the game
   }
@@ -605,6 +609,7 @@ function updateNumberButtons() {
 
     if (remaining <= 0) {
       if (!btn.classList.contains("hidden-number")) {
+        dnumSound.play();
         triggerNumberPop(num); // Trigger animation when a number is fully placed in the clues, providing a celebratory visual effect to reward the player for completing that number in the puzzle and enhancing the overall gaming experience with positive feedback for their progress
         if (selectedNumber === num) {
           highlightAll("");
