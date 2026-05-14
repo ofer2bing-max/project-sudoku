@@ -7,6 +7,7 @@ const difficultyLevels = {
   Advanced: 59,
   Impossible: 64,
 };
+let boiSound = new Audio('boi.mp3');
 let dnumSound =new Audio('dNum.mp3');
 let noSound = new Audio('no.mp3');
 let errorSound = new Audio('error.wav');
@@ -717,6 +718,7 @@ function showWinScreen() {
   document.getElementById("final-lives").innerText = lives;
   if (screen) {
     setTimeout(() => {
+      boiSound.play();
       screen.classList.remove("hidden");
       screen.style.display = "flex"; // Ensure the win screen is displayed as a flex container for proper layout of its contents, providing a visually appealing and organized presentation of the win message and options for the player when they successfully complete the game
     }, 1000);
