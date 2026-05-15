@@ -10,7 +10,7 @@
   --light-purple: #f3e5f5; /* Very faint purple for highlights */
   --accent-purple: #bb8fce; /* Mid-tone for borders */
   --bg-dark: #1a0a23; /* Dark purple-black background */
-  --white: #ffffff;
+  --white: #ffffff; /* Creates a global variable for pure white */
 }
 
 /* 2. Page Container - Centers the game on the screen */
@@ -19,34 +19,34 @@ body {
   align-items: center; /* Centers everything horizontally */
   justify-content: center; /* Centers everything vertically */
   height: 100dvh; /* Makes body at least as tall as the screen */
-  margin: 0;
-  padding: 0; 
+  margin: 0; /* Removes default browser margin padding around the edge of the page */
+  padding: 0; /* Removes default browser inner padding from the body element */
   flex-direction: column; /* Stacks title, grid, and buttons in a column */
-  font-family: sans-serif;
+  font-family: sans-serif; /* Sets the fallback clean font style without serifs */
   user-select: none; /* Stops text highlighting when you click the board fast */
   overflow: hidden; /* Prevents any accidental scrollbars from appearing */
   overscroll-behavior-y: contain; /* Prevents "rubber band" effect on mobile when scrolling */
   position: fixed; /* Keeps the game perfectly centered even if the user tries to scroll */
-  width: 100%;
+  width: 100%; /* Forces the body element to match the total width of the device screen */
 }
 
 /* 3. Title */
 h1 {
-  text-align: center;
-  margin: 10px 0 5px 0;
+  text-align: center; /* Horizontally centers the main title text inside its container */
+  margin: 10px 0 5px 0; /* Sets specific spacing around the title: top 10px, right 0, bottom 5px, left 0 */
   font-size: clamp(2em, 8vw, 3em); /* Shrinks font on smaller screens */
 }
 
 #game-container {
-  position: relative;
-  height: 100%;
-  display: flex;
-  flex: 1;
-  justify-content: space-evenly;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
+  position: relative; /* Sets a coordinate reference frame for any child elements using absolute positioning */
+  height: 100%; /* Demands that this wrapper expands to the full height of the body parent */
+  display: flex; /* Establishes a flexbox formatting environment for managing nested assets */
+  flex: 1; /* Instructs this component to stretch and fill all available remaining screen estate */
+  justify-content: space-evenly; /* Evenly distributes spacing around all internal rows of the game layout */
+  flex-direction: column; /* Organizes nested elements in a top-to-bottom stack sequence */
+  align-items: center; /* Keeps children perfectly centered horizontally inside the container */
+  justify-content: center; /* Secondary justification alignment setting targeting vertical structural centering */
+  width: 100%; /* Matches the total physical structural width of the active browser viewpoint */
   animation: fadeIn 0.4s ease-in; /* Smooth entrance */
 }
 
@@ -58,189 +58,222 @@ h1 {
   width: 80vmin; /* Uses 90% of the screen's shortest side */
   height: 80vmin; /* Keeps it square */
   max-width: 450px; /* Prevents it from getting too big on desktop */
-  max-height: 450px;
-  margin: 10px auto;
-  border: 4px solid black;
+  max-height: 450px; /* Locks vertical height down on desktops to maintain aspect balance */
+  margin: 10px auto; /* Provides 10px of room at top/bottom and uses auto-margins to center it */
+  border: 4px solid black; /* Establishes a thick outer border rim bounding the entire 9x9 grid matrix */
   background-color: black; /* Acts as the "border" between cells */
   gap: 2px; /* The thickness of the thin lines */
 }
 @keyframes fadeIn {
   from {
-    opacity: 0;
-    transform: scale(0.95);
+    opacity: 0; /* Initiates structural transition state completely hidden out of sight */
+    transform: scale(
+      0.95
+    ); /* Shrinks initial element scale down slightly by 5 percent */
   }
   to {
-    opacity: 1;
-    transform: scale(1);
+    opacity: 1; /* Finishes transitions completely solid and visible to the player */
+    transform: scale(
+      1
+    ); /* Restores elements back to full baseline geometric dimensions */
   }
 }
 #sudoku-game input {
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  font-size: 16px;
-  font-weight: bold;
-  border: none;
-  cursor: pointer;
-  background: white;
+  width: 100%; /* Causes grid square input panels to widen up across all assigned cells */
+  height: 100%; /* Causes grid square input panels to extend high through all assigned cells */
+  text-align: center; /* Automatically centers user-typed numbers directly within grid squares */
+  font-size: 16px; /* Configures a 16px value text height baseline to block automatic iOS zoom triggers */
+  font-weight: bold; /* Boldfaces text or inputs entered directly into the gameboard squares */
+  border: none; /* Strips standard baseline border frame graphics off the raw input elements */
+  cursor: pointer; /* Displays a friendly pointing hand interaction icon when users hover cells */
+  background: white; /* Applies a clean baseline solid white layout fill behind active numbers */
   touch-action: manipulation; /* Improves touch responsiveness on mobile */
 }
 #win-screen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  position: fixed; /* Freezes the completion sheet in place layered across active windows */
+  top: 0; /* Aligns the start boundary edge of victory overlay directly flush with browser top */
+  left: 0; /* Aligns the left boundary edge of victory overlay directly flush with browser side */
+  width: 100vw; /* Spans across the entire horizontal dimensional limit of active view screen windows */
+  height: 100vh; /* Spans across the entire vertical dimensional limit of active view screen windows */
   background: rgba(26, 10, 35, 0.8); /* Semi-transparent dark background */
   backdrop-filter: blur(10px); /* Adds a modern blur effect */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
-  opacity: 1;
+  display: flex; /* Leverages flexbox positioning logic to isolate and center victory modal boxes */
+  align-items: center; /* Vertically aligns elements centrally on the horizontal access line */
+  justify-content: center; /* Horizontally centers elements centrally on the vertical access line */
+  z-index: 2000; /* Generates a high priority stacking layer setting to stay on top of regular grids */
+  opacity: 1; /* Configures standard visibility mode values to defaults during visible states */
   transition: opacity 0.4s ease; /* Smooth fade-out when hiding */
 }
 
 /* 1. Lighten the background card */
 .winner-content {
-  background: var(--white);
-  padding: 40px;
-  border-radius: 24px;
-  text-align: center;
-  width: 90%;
+  background: var(
+    --white
+  ); /* Implements the saved global variable white theme color background */
+  padding: 40px; /* Surrounds internal modal content text blocks with 40px buffer breathing room */
+  border-radius: 24px; /* Softens and curves sharp corners of modal sheet boxes gracefully */
+  text-align: center; /* Adjusts text configuration layers to lock alignment down squarely over center */
+  width: 90%; /* Dynamically controls sizing on portable devices to match ninety percent width values */
   max-width: 450px; /* Slightly wider to fit buttons side-by-side */
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* Emits soft structural drop shadows downwardly for realistic depth styles */
   border: 4px solid var(--primary-color); /* Adds a purple border to match the theme */
 }
 
 /* 2. Make the "Victory" text more vibrant */
 .winner-content h2 {
-  font-size: 3rem;
-  margin-bottom: 5px;
+  font-size: 3rem; /* Enlarges text size metrics heavily to emphasize global win event announcements */
+  margin-bottom: 5px; /* Compresses empty dead zones sitting right beneath major victory content headings */
   background: linear-gradient(
     to bottom,
     var(--primary-color),
     var(--dark-purple)
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  ); /* Implements dual color palette vertical flows inside specified graphic boundaries */
+  -webkit-background-clip: text; /* Masks gradient color layers inside Webkit rendering engine text silhouettes */
+  background-clip: text; /* Masks gradient color layers inside modern rendering engine text silhouettes */
+  -webkit-text-fill-color: transparent; /* Strips initial font core fills away allowing gradients underneath to emerge */
+  color: transparent; /* Universal fallback clear text property keeping standard core colors hidden safely */
+  filter: drop-shadow(
+    0 2px 4px rgba(0, 0, 0, 0.1)
+  ); /* Adds subtle shadow accentuation mapping right under custom text texturing */
 }
 
 /* 3. Lighten the sub-text */
 .winner-content p {
   color: var(--accent-purple); /* Soft gray instead of dark gray */
-  font-size: 1.1rem;
-  margin-top: 0;
+  font-size: 1.1rem; /* Bumps text point metrics up slightly above regular basic base paragraph scales */
+  margin-top: 0; /* Eradicates excessive empty top bounding zone space fields above paragraphs */
 }
 
 /* 4. Horizontal Buttons */
 /* This is the box around the buttons */
 .winner-actions-container {
-  margin-top: 30px;
-  padding-top: 20px;
+  margin-top: 30px; /* Separates actions block panel arrays from content sections situated directly higher up */
+  padding-top: 20px; /* Generates padding layout spaces within container walls right above button items */
   border-top: 1px solid #eee; /* A subtle line to separate stats from buttons */
-  width: 100%;
+  width: 100%; /* Forces container blocks to scale out out to full structural widths of target card wrapper grids */
 }
 
 .winner-buttons {
-  display: flex;
-  flex-direction: row;
-  gap: 12px;
-  justify-content: center;
+  display: flex; /* Introduces structural layout mechanics utilizing modern row control structures */
+  flex-direction: row; /* Orients content side-by-side across horizontal rows uniformly */
+  gap: 12px; /* Uniform spacing buffer setting applied in-between individual adjacent navigation selectors */
+  justify-content: center; /* Pulls active layout nodes inward matching center horizontal tracking rules */
 }
 
 .win-btn {
-  flex: 1;
-  padding: 14px;
+  flex: 1; /* Permits interaction paths to auto-scale evenly filling accessible layout columns */
+  padding: 14px; /* Buffers mouse click surfaces cleanly with deep inner perimeter area padding scales */
   border-radius: 12px; /* Slightly less round for a cleaner look */
-  font-weight: bold;
-  cursor: pointer;
-  border: none;
-  font-size: 0.95rem;
+  font-weight: bold; /* Boldfaces text lettering values within targeted option selection nodes */
+  cursor: pointer; /* Displays standard hand click glyph pointers when hovered over by player click selectors */
+  border: none; /* Trims structural basic operating system native borders out completely from user view fields */
+  font-size: 0.95rem; /* Sets scale tracking properties explicitly regarding modal interface operation tools text sizes */
   transition:
     transform 0.1s,
-    filter 0.2s;
+    filter 0.2s; /* Governs duration profiles specifying button animation scale transitions and brightness filtering */
 }
 
 /* Let's give the buttons a tiny shadow so they don't look flat */
 .win-btn.primary {
-  background: var(--primary-color);
-  color: var(--white);
+  background: var(
+    --primary-color
+  ); /* Couples button interfaces with default main aesthetic branding values directly */
+  color: var(
+    --white
+  ); /* Changes core text coloring metrics across main button profiles cleanly into pure white */
   box-shadow: 0 4px 0 var(--dark-purple); /* 3D bottom edge */
 }
 
 .win-btn.secondary {
-  background: var(--light-purple);
-  color: var(--dark-purple);
+  background: var(
+    --light-purple
+  ); /* Drops faint tint background textures right under supporting button interfaces */
+  color: var(
+    --dark-purple
+  ); /* Adjusts auxiliary action lettering colors utilizing saved custom deep dark purple variables */
   box-shadow: 0 4px 0 var(--accent-purple); /* 3D bottom edge */
 }
 
 .win-btn:active {
   transform: translateY(2px); /* Pushes the button "down" when clicked */
-  box-shadow: 0 2px 0 var(--accent-purple);
+  box-shadow: 0 2px 0 var(--accent-purple); /* Flattens 3D edge depth thickness during active physical clicks to reflect compression */
 }
 /* 5. Stat Colors */
 .final-stat {
   color: #444; /* Darker for contrast since background is lighter */
-  font-weight: 600;
-  margin-bottom: 5px;
+  font-weight: 600; /* Heavy weight parameters set specifically to define summary scores reading points cleanly */
+  margin-bottom: 5px; /* Compresses dead margin zones underneath text logs preventing structural layout creep */
 }
 #Game-over-screen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  position: fixed; /* Pinpoints layout coordinates explicitly to screen view framing independent of user movement */
+  top: 0; /* Clamps top game over viewport layout nodes strictly against viewport zero indexes */
+  left: 0; /* Clamps left game over viewport layout nodes strictly against viewport zero indexes */
+  width: 100vw; /* Scales system view panel spaces to swallow entire wide monitor bounds */
+  height: 100vh; /* Scales system view panel spaces to swallow entire high monitor bounds */
   background: rgba(26, 10, 35, 0.9); /* Darker background */
   backdrop-filter: blur(10px); /* Modern blur effect */
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: var(--white);
-  text-align: center;
+  z-index: 1000; /* Stacks layer safely relative to root components to eclipse basic user layout states */
+  display: flex; /* Activates flexible structure tools to help layout lost game summary displays */
+  flex-direction: column; /* Locks alignment orientation values inside downward running column lines */
+  align-items: center; /* Locks item placement boundaries safely over layout horizontal midpoints */
+  justify-content: center; /* Locks item placement boundaries safely over layout vertical midpoints */
+  color: var(
+    --white
+  ); /* Sets foreground typographic color maps over baseline text files into clear white scales */
+  text-align: center; /* Dictates paragraph alignments inside defeat message banners to stay centered evenly */
 }
 #Game-over-screen h2 {
-  font-size: 3rem;
-  margin-bottom: 10px;
+  font-size: 3rem; /* Inflates failure notification headline values significantly for design visual layout balance */
+  margin-bottom: 10px; /* Reserves clear margins under primary text headers before loading follow up options data lists */
   color: var(
     --accent-purple
   ); /* A soft purple color for the "Game Over" text */
 }
 #Game-over-screen p {
-  font-size: 1.2rem;
-  margin-bottom: 30px;
+  font-size: 1.2rem; /* Configures descriptive summary subtitles to display at clear 1.2 Rem values */
+  margin-bottom: 30px; /* Allocates 30px clear breathing space directly beneath descriptions before displaying interactive action keys */
 }
 .game-over-buttons {
-  display: flex;
-  gap: 15px;
+  display: flex; /* Coordinates structure behaviors across failure modal button configurations via flex layout tools */
+  gap: 15px; /* Builds a reliable fifteen pixel tracking separation interface cleanly between individual option pads */
 }
 .game-over-buttons button {
-  padding: 12px 24px;
-  font-size: 1rem;
-  font-weight: bold;
-  border: none;
-  border-radius: 30px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  padding: 12px 24px; /* Extends click surface boxes out by twelve pixels vertically and twenty-four pixels horizontally */
+  font-size: 1rem; /* Enforces absolute typographic standard text configurations directly inside control modules */
+  font-weight: bold; /* Boldfaces failure option actions text values to draw player eyes quickly to choices */
+  border: none; /* Deletes basic layout browser border lines off failure navigation command button objects */
+  border-radius: 30px; /* Generates highly rounded oval capsules structural design curves on interactive button bodies */
+  cursor: pointer; /* Summons pointing navigation hand icons over interactive button fields instantly on mouse overs */
+  transition: background-color 0.3s ease; /* Transitions background shifts slowly across 0.3 second pacing profiles smoothly */
 }
 #restart-btn {
-  background-color: var(--primary-color);
-  color: var(--white);
-  box-shadow: 0 5px 15px rgba(142, 68, 173, 0.4);
+  background-color: var(
+    --primary-color
+  ); /* Fills main game reload button using standard core system purple variables */
+  color: var(
+    --white
+  ); /* Sets standard retry textual display colors to clean high contrast white styles */
+  box-shadow: 0 5px 15px rgba(142, 68, 173, 0.4); /* Projects soft ambient purple glow mapping textures behind primary retry pathways */
 }
 #new-game-btn {
-  color: var(--white);
-  background-color: rgba(255, 255, 255, 0.1);
-  border: 1px solid var(--accent-purple);
+  color: var(
+    --white
+  ); /* Matches sub action button lettering into clean white tone palettes */
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.1
+  ); /* Coats background with transparent glass overlay layers */
+  border: 1px solid var(--accent-purple); /* Frames auxiliary button bounds cleanly via soft purple layout borders */
 }
 .game-over-buttons button:hover {
-  transform: scale(1.1);
-  filter: brightness(1.1);
+  transform: scale(
+    1.1
+  ); /* Scales component sizes up 10 percent when mouse pointers rest directly inside button walls */
+  filter: brightness(
+    1.1
+  ); /* Drives component color vibrancy up by ten percent during mouse interaction frames */
 }
 /* 6. Grid Board Thick Lines */
 #sudoku-game input:nth-child(3n) {
@@ -256,97 +289,97 @@ h1 {
 
 /* 7. Controls & 1-9 Number Buttons */
 .controls {
-  width: 80vmin;
-  max-width: 450px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  margin-top: 10px;
+  width: 80vmin; /* Syncs control element boundaries matching structural game space dimensions perfectly */
+  max-width: 450px; /* Locks control layout sizes safely against expanding past the main board limits */
+  display: flex; /* Introduces flex control options across interaction panels to align elements easily */
+  flex-direction: column; /* Directs children inside control boxes to organize cleanly from top down */
+  align-items: center; /* Pins horizontal alignments inside control parent modules right over mid axes */
+  gap: 10px; /* Separates numeric pads cleanly away from functional layout control rows by ten pixels */
+  margin-top: 10px; /* Provides separation spacing above buttons to keep them distinct from active board frames */
 }
 
 .number-buttons {
-  display: flex;
+  display: flex; /* Organizes responsive tracking behaviors across input number selector nodes using flexible grids */
   flex-wrap: wrap; /* Key fix: wraps numbers to new row on small screens */
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
+  justify-content: center; /* Moves internal numerical button columns directly onto mid section layout spots */
+  gap: 8px; /* Constructs eight-pixel buffer zones cleanly between all numerical selection squares */
+  width: 100%; /* Spreads keypad wrapper footprints cleanly across full available layout rows */
 }
 
 .number-btn {
-  position: relative;
+  position: relative; /* Isolates layout coordinates inside input keys for stacking sub badges accurately */
   flex: 0 1 40px; /* Tries to be 40px, but grows/shrinks to fill width */
-  max-width: 60px;
+  max-width: 60px; /* Forbids individual layout pads from expanding out wider than sixty pixels total */
   aspect-ratio: 1 / 1; /* Keeps them as squares */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  cursor: pointer;
-  color: black !important;
+  display: flex; /* Leverages flexible positioning alignment tools to center typography inside nodes */
+  align-items: center; /* Pins content elements inside keypad squares squarely over center horizontal points */
+  justify-content: center; /* Pins content elements inside keypad squares squarely over center vertical points */
+  font-size: 1.5rem; /* Amplifies input digit labels font scale parameters up for quick player scanning reads */
+  background-color: #f0f0f0; /* Coats inactive numerical choice blocks with clean neutral light grey layout tones */
+  border: 1px solid #ccc; /* Surrounds numeric keys with soft framing accents to define item surfaces */
+  border-radius: 8px; /* Curves square button edges inward gently via clean eight pixel radius controls */
+  cursor: pointer; /* Commands navigation pointers to switch into links pointer indicators on button hovers */
+  color: black !important; /* Rules text color layers inside keypad blocks to override into black universally */
   -webkit-text-fill-color: black !important; /* This forces iOS to stop the blue */
-  text-decoration: none !important;
+  text-decoration: none !important; /* Strips accidental layout underline markings off action button textual content blocks */
 }
 #status {
-  display: flex;
+  display: flex; /* Enlists flexible layout controls to align live tracking game score stats labels */
   justify-content: center; /* Centers the boxes */
   gap: 15px; /* Controls the distance between the boxes */
-  margin-bottom: 20px;
-  width: 90vmin;
-  max-width: 500px;
+  margin-bottom: 20px; /* Leaves structural room directly beneath data tracking nodes before loading following items */
+  width: 90vmin; /* Links panel data sizes proportionally against ninety units of shortest screen directions */
+  max-width: 500px; /* Caps maximum bounding horizontal boundaries across game information rows cleanly at 500px */
 }
 
 .stat-box {
   flex: 1; /* Makes all three boxes the exact same width */
-  background: #f8f9fa;
-  padding: 8px;
-  border-radius: 10px;
-  display: flex;
+  background: #f8f9fa; /* Coats status element cards with modern off-white clean background skin textures */
+  padding: 8px; /* Seals interior status content lines with protective eight pixel container boundary spaces */
+  border-radius: 10px; /* Rounds layout bounding structures across information cards via ten pixel settings */
+  display: flex; /* Controls positioning profiles inside tracking boxes with flexible flow engine rules */
   flex-direction: column; /* Put label on top of the number */
-  align-items: center;
-  border: 1px solid #eee;
+  align-items: center; /* Ensures tracking titles and readouts center up evenly along identical vertical channels */
+  border: 1px solid #eee; /* Frames stats blocks carefully using soft thin architectural gray borders */
 }
 
 .stat-box .label {
-  font-size: 0.65rem;
-  font-weight: bold;
-  color: #888;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  font-size: 0.65rem; /* Shrinks administrative labels to make actual statistics values more prominent */
+  font-weight: bold; /* Boldfaces administrative informational titles for high interface clarity lookups */
+  color: #888; /* Softens title tracking characters into muted neutral shades to establish good layout hierarchy */
+  text-transform: uppercase; /* Converts standard tracking title letters completely into capitalized block text strings */
+  letter-spacing: 1px; /* Emits one pixel wide tracking fields tracking spacing cleanly between metadata title letters */
 }
 
 .stat-box .value {
-  font-size: 1.2rem;
-  font-weight: bold;
+  font-size: 1.2rem; /* Scales variable output integers up to legible 1.2 Rem sizing metrics cleanly */
+  font-weight: bold; /* Darkens font profiles inside scoring numbers to draw player validation views instantly */
   font-family: "Courier New", Courier, monospace; /* Keeps numbers steady */
-  color: #333;
+  color: #333; /* Shifts layout numbers into heavy dark charcoal fills ensuring good accessibility contrast ratios */
 }
 
 /* Specific colors to match your theme */
 #time-count {
-  color: #3d7af5;
+  color: #3d7af5; /* Sets up game clock readout font metrics with specific clear blue identity values */
 } /* Blue */
 #lives-count {
-  color: black;
+  color: black; /* Overrides standard lives counter displays to follow pure solid black color styling */
 } /*black*/
 #score-count {
-  color: purple;
+  color: purple; /* Instructs active score tracking numerical readouts to utilize distinct purple color channels */
 } /* Purple */
 
 .count-badge {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  font-size: 0.75rem;
-  color: #888;
-  font-weight: normal;
+  position: absolute; /* Pulls active count badges out of document layout orders to anchor them against box margins */
+  top: 2px; /* Pulls the target count indicator graphic close up towards parent item ceiling edges by 2px */
+  right: 2px; /* Pulls the target count indicator graphic close over towards parent item right edges by 2px */
+  font-size: 0.75rem; /* Reduces badge fonts to compact dimensions keeping main numeric values dominant */
+  color: #888; /* Tones badge layout numbers back down into soft neutral slate grey color tones */
+  font-weight: normal; /* Disables structural bold tracking parameters over helper count badges content lines */
 }
 
 .selected-number .count-badge {
-  color: white;
+  color: white; /* Flips counter metrics typography into high visual contrast clear white on selection states */
 }
 /* 8. Modern Icon Action Buttons (Undo, Restart, etc.) */
 #home-button .icon,
@@ -358,38 +391,38 @@ h1 {
 }
 
 .button-actions {
-  display: flex;
+  display: flex; /* Launches structural box flow configurations over system utility tool button sets */
   justify-content: space-around; /* Spreads icons evenly across width */
-  width: 100%;
+  width: 100%; /* Directs utility tool trays to occupy full width areas of layout grids */
 }
 
 .action-item {
-  display: flex;
+  display: flex; /* Opens up micro element alignment systems utilizing flexbox options across individual tools */
   flex-direction: column; /* Puts icon on top, text on bottom */
-  align-items: center;
-  gap: 5px;
-  cursor: pointer;
-  flex: 1;
-  padding: 10px;
-  transition: all 0.2s ease;
+  align-items: center; /* Ensures utility symbols and their descriptions align perfectly along vertical centers */
+  gap: 5px; /* Seals five-pixel spacing fields cleanly between utility icon loops and descriptive label tags */
+  cursor: pointer; /* Activates hand indicators instantly when users point mouse tracks onto command buttons */
+  flex: 1; /* Dictates utility command keys expand symmetrically to split structural tool rows evenly */
+  padding: 10px; /* Provides comfortable ten pixel interaction fields around individual tool container bounds */
+  transition: all 0.2s ease; /* Applies 0.2s smooth tracking adjustments over all variable states across tools */
 }
 
 .action-item .icon {
   width: 50px; /* Size of the circular background */
-  height: 50px;
+  height: 50px; /* Locks height metrics of tool buttons down matching the 50px wide boundaries exactly */
   border-radius: 50%; /* Makes it a circle */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
+  display: flex; /* Introduces structural layout tools to position tool glyph lines straight over center dots */
+  align-items: center; /* Centers active vector glyph objects directly inside circular background bounding structures vertically */
+  justify-content: center; /* Centers active vector glyph objects directly inside circular background bounding structures horizontally */
+  font-size: 24px; /* Adjusts symbol text point heights inside functional control elements to clean 24px points */
   background-color: #f0f4f8; /* Light grey/blue circle color */
-  transition: 0.2s;
+  transition: 0.2s; /* Governs visual style adjustments across structural icon wrappers to track over 0.2s speeds */
 }
 
 .action-item span {
-  font-size: 12px;
-  color: #666;
-  font-weight: 600;
+  font-size: 12px; /* Limits descriptive tool guide labels down into compact twelve pixel type scales */
+  color: #666; /* Applies subtle neutral gray tones over secondary system utility descriptive text lines */
+  font-weight: 600; /* Weights tracking descriptive characters securely up towards semi-bold text definitions */
   text-transform: uppercase; /* Modern look label */
 }
 
@@ -398,21 +431,31 @@ h1 {
 }
 .action-item:active .icon,
 #mark-small.active-mark .icon {
-  background-color: var(--primary-color);
-  color: var(--white);
+  background-color: var(
+    --primary-color
+  ); /* Swaps control backgrounds instantly into standard purple on active triggers */
+  color: var(
+    --white
+  ); /* Changes internal symbol graphics color fills into pure white for legibility */
 }
 
 #clear.selected-number {
   background-color: transparent !important; /* This kills the blue box */
-  border: none !important;
-  box-shadow: none !important;
-  transform: none !important;
+  border: none !important; /* Forced eradication of layout framework borders during cell erasing selection sweeps */
+  box-shadow: none !important; /* Drops physical rendering shadow graphics off cell cleaning buttons during selection */
+  transform: none !important; /* Neutralizes standard displacement bounce animations over active cell wiping controls */
 }
 
 #clear.selected-number .icon {
-  background-color: var(--primary-color) !important;
-  color: var(--white) !important;
-  transform: scale(1.1);
+  background-color: var(
+    --primary-color
+  ) !important; /* Forces layout background skins across active eraser icons to stay solid purple */
+  color: var(
+    --white
+  ) !important; /* Overrides embedded eraser icon vector artwork layers to display in clear white styles */
+  transform: scale(
+    1.1
+  ); /* Scales icon wrapper elements up ten percent to indicate explicit active usage modes */
 }
 
 /* 9. Game Feedback (Errors and Selection) */
@@ -420,154 +463,177 @@ h1 {
   background-color: var(
     --light-purple
   ) !important; /* Highlights current number */
-  color: var(--white) !important;
-  border: 2px solid var(--dark-purple) !important;
+  color: var(
+    --white
+  ) !important; /* Converts matching character text values explicitly into high contrast white */
+  border: 2px solid var(--dark-purple) !important; /* Outlines selected item boxes with solid dark purple border paths */
   transform: scale(1.05) !important; /* Makes it look "pushed in" or active */
 }
 /* This turns the cell into a "mini-grid" for tiny notes */
 .small-text {
-  /* Bold and readable */
-  font-size: 8px !important;
-  font-weight: bold !important;
-  color: #444 !important;
-
-  /* Basic alignment that won't move the box */
-  display: block !important;
-  text-align: left !important;
-  line-height: 1.2 !important;
-
-  /* Very tiny margin-style padding */
-  padding: 1px 0 0 3px;
-
-  /* Ensure the background stays white */
-  background-color: #fff !important;
-  touch-action: none;
+  font-size: 8px !important; /* Forces cell drafting numbers down to mini eight pixel values strictly */
+  font-weight: bold !important; /* Enforces absolute heavy text tracking constraints over pencil draft points */
+  color: #444 !important; /* Overrides pencil draft numerical items into dark charcoal color configurations */
+  display: block !important; /* Normalizes line break parameters around drafting nodes within board cells */
+  text-align: left !important; /* Snaps active pencil note drafting lists tightly up over left margin frames */
+  line-height: 1.2 !important; /* Sets up tightly packed vertical line limits avoiding grid cell overflowing states */
+  padding: 1px 0 0 3px; /* Details precise inside margins for notes: 1px top, 0 right, 0 bottom, 3px left */
+  background-color: #fff !important; /* Insulates input drafting backgrounds to maintain clean solid white layers */
+  touch-action: none; /* Deactivates default touch behaviors to ensure seamless handwritten input tracking */
 }
 
 .error {
-  background-color: #ffcccc !important;
-  color: #d8000c !important;
+  background-color: #ffcccc !important; /* Coats miscalculated cell layouts with light error crimson backing skins */
+  color: #d8000c !important; /* Adjusts false digit content fills into stark deep alarm red warning colors */
   animation: shake 0.2s ease-in-out 0s 2; /* Shakes cell on mistake */
 }
 
 /* The "Crosshair" - Lights up the row, column, and 3x3 box of the selected cell */
 .highlight-crosshair {
   background-color: var(--light-purple) !important; /* Very light cyan */
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease; /* Transitions tracking grid illumination responses gracefully across 0.2s speeds */
 }
 
 /* Matching Numbers - Lights up every cell containing the same number as the selection */
 .highlight-same {
   background-color: #e1bee7 !important; /* Soft sky blue */
   border: 1px solid var(--dark-purple); /* Adds a tiny border to make them "pop" */
-  font-weight: bold;
-  transition: background-color 0.1s ease;
-  border: 1px solid var(--primary-color) !important;
+  font-weight: bold; /* Boldfaces matching digits found elsewhere across the board for high visibility */
+  transition: background-color 0.1s ease; /* Speeds up grid match highlight illumination tracking down to snappy 0.1s */
+  border: 1px solid var(--primary-color) !important; /* Overrides matching digit border outlines using primary branding purple paths */
   z-index: 2; /* Ensures the highlighted numbers are above the crosshair */
 }
 
 /* Special Case: If a number is "fixed" (a clue) AND highlighted, make it slightly darker blue */
 .fixed.highlight-same {
-  background-color: #d1c4e9 !important;
-  font-weight: bold;
+  background-color: #d1c4e9 !important; /* Paints default clue squares with darker pastel purple highlights */
+  font-weight: bold; /* Keeps default puzzle layout clue integers heavily weighted for clarity */
 }
 
 /* The active number button you've clicked at the bottom */
 .selected-number {
-  background-color: #3d7af5 !important;
-  color: white !important;
-  border: 2px solid #2a52be;
+  background-color: #3d7af5 !important; /* Repaints bottom action key selections into solid focus blue fills */
+  color: white !important; /* Forces active footer selection key texts to paint completely white */
+  border: 2px solid #2a52be; /* Outlines target key pads with rich deep royal blue structural border bands */
   transform: scale(1.05); /* Makes the button look "pushed in" or active */
 }
 
 @keyframes shake {
   0%,
   100% {
-    transform: translateX(0);
+    transform: translateX(
+      0
+    ); /* Anchors shake sequences cleanly back to zero displacement points at start and end */
   }
   25% {
-    transform: translateX(2px);
+    transform: translateX(
+      2px
+    ); /* Displaces target error layout box structure two pixels out towards the right side */
   }
   75% {
-    transform: translateX(-2px);
+    transform: translateX(
+      -2px
+    ); /* Jars target error layout box structure two pixels out towards the left side */
   }
 }
 
 @keyframes popIn {
   0% {
-    transform: scale(0.5);
-    opacity: 0;
+    transform: scale(
+      0.5
+    ); /* Shrinks scaling factor parameters down half size when starting modal insertions */
+    opacity: 0; /* Initializes element animation timelines completely invisible to browser viewing windows */
   }
   100% {
-    transform: scale(1);
-    opacity: 1;
+    transform: scale(
+      1
+    ); /* Expands tracking structural properties to normal layout shapes at finish frames */
+    opacity: 1; /* Sets rendering properties fully solid completing appearance fade timelines smoothly */
   }
 }
 
 @keyframes bounce {
   0%,
   100% {
-    transform: translateY(0);
+    transform: translateY(
+      0
+    ); /* Returns moving assets securely back to original rest coordinate positions */
   }
   50% {
-    transform: translateY(-20px);
+    transform: translateY(
+      -20px
+    ); /* Catapults elements vertically skyward by twenty pixels at midpoints of cycles */
   }
 }
 /* The animation definition */
 @keyframes number-complete-glow {
   0% {
-    transform: scale(1);
-    background-color: #e8f0fe;
+    transform: scale(
+      1
+    ); /* Initiates completion glows tracking standard element scaling levels */
+    background-color: #e8f0fe; /* Starts progress colors from pale blue neutral tint background scales */
   }
   50% {
-    transform: scale(1.15);
+    transform: scale(
+      1.15
+    ); /* Magnifies target button sizes up by fifteen percent during midpoint pulse states */
     /* A "supercharged" version of your highlight color */
-    background-color: var(--accent-purple);
+    background-color: var(
+      --accent-purple
+    ); /* Bathes component bodies in glowing accent purple system colors briefly */
     color: black !important; /* Make the number white briefly */
-    box-shadow: 0 0 20px rgba(61, 122, 245, 0.6);
-    z-index: 10;
+    box-shadow: 0 0 20px rgba(61, 122, 245, 0.6); /* Blurs out an energetic neon aura ring expansion tracking behind button surfaces */
+    z-index: 10; /* Raises elements up layered over surrounding nodes preventing neighboring layout cover-ups */
   }
   100% {
-    transform: scale(1);
+    transform: scale(
+      1
+    ); /* Normalizes physical item proportions back down to structural standard values */
     /* Back to a "faded" highlight color to show it's done */
-    background-color: #e8f0fe;
+    background-color: #e8f0fe; /* Settles button background cosmetics into calm cool blue static shades */
   }
 }
 @keyframes section-complete {
   0% {
-    transform: scale(1);
-    background-color: white;
+    transform: scale(
+      1
+    ); /* Initiates grid block region win celebrations at standard sizing formats */
+    background-color: white; /* Anchors initial frame background colors onto clean basic white styles */
   }
   40% {
-    transform: scale(1.06);
-    background-color: #d1c4e9;
-    box-shadow: 0 0 12px rgba(142, 68, 173, 0.4);
-    z-index: 10;
-    outline: 1.5px solid var(--primary-color);
+    transform: scale(
+      1.06
+    ); /* Pumps complete sector squares out six percent larger during progress milestones */
+    background-color: #d1c4e9; /* Fills entire complete grid sectors with rich historical lavender tone washes */
+    box-shadow: 0 0 12px rgba(142, 68, 173, 0.4); /* Projects soft radiant purple light fields radiating away from block walls */
+    z-index: 10; /* Elevates grid block borders above standard layers to show structural movement cleanly */
+    outline: 1.5px solid var(--primary-color); /* Traces out high contrast purple outlines tracking around winning grid shapes */
   }
   100% {
-    transform: scale(1);
-    background-color: white;
+    transform: scale(
+      1
+    ); /* Restores winning board sectors seamlessly back down to scale value definitions */
+    background-color: white; /* Sweeps background variables smoothly back to baseline clean white configurations */
   }
 }
 
 .animate-complete {
   /* Snappy duration like the number buttons */
-  animation: section-complete 0.8s ease-out;
+  animation: section-complete 0.8s ease-out; /* Triggers 0.8 second regional win celebrations utilizing decelerating motion timelines */
   /* Ensure borders stay visible during the pop */
-  outline: 1px solid var(--primary-color);
+  outline: 1px solid var(--primary-color); /* Enforces outer visibility tracking guidelines over components via purple outlines */
 }
 
 .number-pop {
-  animation: number-complete-glow 0.6s ease-out;
+  animation: number-complete-glow 0.6s ease-out; /* Fires off 0.6 second number clearance glows on item completions */
   border-radius: 4px; /* Makes the pop look a bit softer */
-  position: relative;
+  position: relative; /* Imposes structural spatial boundaries allowing internal graphic offsets to process correctly */
 }
 /* Optional: Dim the number button at the bottom when finished */
 .number-btn.hidden-number {
-  opacity: 0.2;
+  opacity: 0.2; /* Fades out cleared puzzle numbers down into translucent low visibility profiles */
   pointer-events: none; /* Stops it from being clickable */
-  transition: opacity 0.5s ease;
+  transition: opacity 0.5s ease; /* Eases visibility adjustments across half second durations smoothly */
 }
 
 /* 10. Hidden Utility Class */
@@ -575,124 +641,142 @@ h1 {
   display: none !important; /* Forces elements to disappear */
 }
 .hidden-number {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
+  opacity: 0; /* Fully conceals target input digit indicators out of visible layouts entirely */
+  visibility: hidden; /* Tells accessibility rendering engines to treat hidden components as un-rendered elements */
+  pointer-events: none; /* Neutralizes touch click registers preventing phantom inputs from registering on screens */
+  transition: opacity 0.3s ease; /* Standardizes transition opacity drop speeds over 0.3 second pacing profiles */
 }
 /* --- The Main Menu (Hero Section) --- */
 #main-menu {
-  background-color: #ffffff;
-  display: flex;
-  flex-direction: column;
+  background-color: #ffffff; /* Floods game introduction menu layouts with clean solid white color styling */
+  display: flex; /* Commands root welcome interface nodes to position contents using flex architectures */
+  flex-direction: column; /* Sets stack logic parameters within title menu screens to direct top down */
   justify-content: space-around; /* Pushes title UP and button DOWN */
-  align-items: center;
-  padding: 80px 0;
-  z-index: 3000;
+  align-items: center; /* Pins splash screen brand items tightly over layout vertical center splits */
+  padding: 80px 0; /* Creates large eighty pixel safety buffers running across top and bottom regions */
+  z-index: 3000; /* Stacks menu screens safely above game elements ensuring clean loading views */
 }
 
 .logo-text {
-  font-size: clamp(3.5rem, 15vw, 5rem) !important;
+  font-size: clamp(
+    3.5rem,
+    15vw,
+    5rem
+  ) !important; /* Adjusts header widths smoothly utilizing scaling clamp limits based on display bounds */
   color: #333 !important; /* Darker, more modern color */
-  font-weight: 800;
-  letter-spacing: 2px;
+  font-weight: 800; /* Weights game logo letter strings up into massive heavy block text styles */
+  letter-spacing: 2px; /* Generates luxurious wide tracking fields tracking two pixels out between header characters */
   text-shadow: none; /* Removed the old shadow for a cleaner look */
 }
 
 .main-play-btn {
-  width: 85vw;
-  max-width: 320px;
-  padding: 22px;
-  background: #6200ee;
-  color: white;
-  border: none;
-  border-radius: 18px;
-  font-size: 1.4rem;
-  font-weight: bold;
+  width: 85vw; /* Sets primary interface launch tools to widen across eighty-five percent of screens */
+  max-width: 320px; /* Constrains menu navigation activation paddles from tracking wider than 320px on desktops */
+  padding: 22px; /* Packs inside click zones across button faces with extensive twenty-two pixel depths */
+  background: #6200ee; /* Paints primary start options utilizing classical digital material system purple colors */
+  color: white; /* Ensures navigation trigger label strings render out in sharp white colors */
+  border: none; /* Dispels old school default platform line frames from game entry button outlines */
+  border-radius: 18px; /* Smooths down main interaction button edges cleanly via modern eighteen pixel parameters */
+  font-size: 1.4rem; /* Projects play button textual strings outward using legible 1.4 Rem configurations */
+  font-weight: bold; /* Employs heavy bold tracking treatments directly over central launch options typography */
   box-shadow: 0 10px 20px rgba(98, 0, 238, 0.2); /* Soft purple glow */
-  cursor: pointer;
-  transition: transform 0.1s;
+  cursor: pointer; /* Modifies cursor behaviors to request link fingers instantly during menu hover sweeps */
+  transition: transform 0.1s; /* Schedules fast 0.1 second timelines to compute compression shifts on press events */
 }
 
 .main-play-btn:active {
-  transform: scale(0.95);
+  transform: scale(
+    0.95
+  ); /* Pinches scale proportions down by 5 percent providing tactile click confirmation feedback */
 }
 
 /* --- The Bottom Sheet (The Slide-up Panel) --- */
 .bottom-sheet {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 5000;
-  display: flex;
-  flex-direction: column;
+  position: fixed; /* Freezes slide layout option boxes safely relative to active display coordinates */
+  top: 0; /* Positions initial difficulty panel frames flush against maximum browser ceiling markers */
+  left: 0; /* Positions initial difficulty panel frames flush against maximum browser side margins */
+  width: 100%; /* Commands full display window widths to match layout spaces across slide mechanics */
+  height: 100%; /* Commands full display window heights to match layout spaces across slide mechanics */
+  z-index: 5000; /* Maximizes layout visibility variables ensuring preference sheets stay on top of interfaces */
+  display: flex; /* Launches layout distribution tools over difficulty sheet component packages */
+  flex-direction: column; /* Organizes nested sub sheets content elements into top to bottom column lanes */
   justify-content: flex-end; /* Sticks the menu to the bottom */
 }
 
 .sheet-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  position: absolute; /* Frees mask sheets out of baseline workflows to span structural areas inside parents */
+  top: 0; /* Glues screen dim overlay grids safely against top parent boundary lines */
+  left: 0; /* Glues screen dim overlay grids safely against left parent boundary lines */
+  width: 100%; /* Spreads background tint layers completely over total width boundaries of displays */
+  height: 100%; /* Spreads background tint layers completely over total height boundaries of displays */
   background: rgba(0, 0, 0, 0.4); /* Dims the background */
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(
+    2px
+  ); /* Distorts underlying pixels behind backgrounds with soft two pixel frosting blurs */
 }
 
 .sheet-content {
-  position: relative;
-  background: white;
-  width: 100%;
+  position: relative; /* Generates a safe structural index base framework inside preference selector menu cards */
+  background: white; /* Floods slide panel interface modules with solid clean white background textures */
+  width: 100%; /* Adjusts choice block layout horizons to match full device structural cross dimensions */
   border-radius: 30px 30px 0 0; /* Rounds the top only */
-  padding: 20px 20px 40px 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  padding: 20px 20px 40px 20px; /* Applies custom interior margin buffers: top 20px, sides 20px, deeper 40px bottom */
+  display: flex; /* Leverages flex systems to manage vertical column items inside sliding menus cleanly */
+  flex-direction: column; /* Dictates options inside sheets stack smoothly along top to bottom layouts */
+  align-items: center; /* Drags sheet layout asset properties tightly inward across vertical midlines */
   animation: slideUp 0.3s ease-out; /* The slide effect */
 }
 
 .drag-handle {
-  width: 40px;
-  height: 5px;
-  background: #e0e0e0;
-  border-radius: 10px;
-  margin-bottom: 20px;
+  width: 40px; /* Tracks structural bar lengths over forty pixels width parameters specifically */
+  height: 5px; /* Tracks physical thickness measurements of indicator strips at five pixels high */
+  background: #e0e0e0; /* Colors central touch panel bar segments using clean soft neutral platinum gray */
+  border-radius: 10px; /* Turns raw rectangle indicator boxes into fully smoothed structural capsule lines */
+  margin-bottom: 20px; /* Clears twenty pixels of open safety margins below indicators before printing selections */
 }
 
 .difficulty-list {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  width: 100%; /* Forces internal challenge list structures to spread across total available card spaces */
+  display: flex; /* Calls for flexible alignment logic across arrays of challenge rank options */
+  flex-direction: column; /* Arranges list items systematically into single file top down list rows */
+  gap: 12px; /* Constructs twelve pixel separation voids cleanly between successive challenge choices */
 }
 
 /* The Clean List Buttons */
 .difficulty-btn {
-  width: 100% !important;
-  max-width: none !important;
-  background: #f8f9fa !important;
-  color: #333 !important;
-  border: 1px solid #eee !important;
-  padding: 18px !important;
-  font-size: 1.1rem !important;
-  border-radius: 12px !important;
-  box-shadow: none !important;
+  width: 100% !important; /* Compels choice blocks to sweep flat across full usable sheet widths unconditionally */
+  max-width: none !important; /* Destroys maximum pixel ceiling targets on sheet selection options across wide devices */
+  background: #f8f9fa !important; /* Forces options panels to assume elegant soft off white baseline skin tones */
+  color: #333 !important; /* Shifts choice textual titles into heavy high legibility dark gray hues universally */
+  border: 1px solid #eee !important; /* Paints soft thin modern architectural bounding perimeters over choice rows */
+  padding: 18px !important; /* Buffers option label touch zones deeply with clean eighteen pixel parameters */
+  font-size: 1.1rem !important; /* Dictates choice title character sizing strings to read at modern 1.1 Rem sizes */
+  border-radius: 12px !important; /* Enforces clean twelve pixel curved profile metrics over option button shells */
+  box-shadow: none !important; /* Eliminates heavy structural dropshadow graphics off raw difficulty menu selectors */
   text-transform: none !important; /* "Easy" instead of "EASY" */
 }
 
 @keyframes slideUp {
   from {
-    transform: translateY(100%);
+    transform: translateY(
+      100%
+    ); /* Places incoming panels down off-screen completely below base viewport edges */
   }
   to {
-    transform: translateY(0);
+    transform: translateY(
+      0
+    ); /* Glides choices vertically upward onto standard design layout zero positions smoothly */
   }
 }
 
 .difficulty-btn.selected {
-  background: linear-gradient(135deg, var(--primary-color), var(--dark-purple));
-  transform: scale(1.05);
-  transition: all 0.2s ease;
+  background: linear-gradient(
+    135deg,
+    var(--primary-color),
+    var(--dark-purple)
+  ); /* Paints active selections with custom diagonal brand purple gradients */
+  transform: scale(
+    1.05
+  ); /* Expands selected difficulty components up 5 percent signifying active assignments */
+  transition: all 0.2s ease; /* Coordinates visual parameter changes smoothly over 0.2 second interpolation paths */
 }
